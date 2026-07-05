@@ -1,0 +1,56 @@
+scientific_name,common_name,category_primary,endemic,xc_global,xc_chile,gbif_photos_cl,habitat_group,role
+Agriornis albicauda,mero de la puna,VU,False,23.0,2,5.0,terrestrial,conservacion
+Anous stolidus,gaviotín de San Félix,VU,False,41.0,0,11.0,coastal_shorebird,conservacion
+Calidris canutus,playero ártico,EN,False,311.0,0,21.0,coastal_shorebird,conservacion
+Charadrius nivosus,chorlo nevado,VU,False,39.0,0,2.0,coastal_shorebird,conservacion
+Chloephaga melanoptera,"piuquén, piquén, guayata",EN,False,55.0,17,421.0,terrestrial,conservacion
+Chloephaga picta,"caiquén, cauquén común",VU,False,38.0,14,991.0,terrestrial,conservacion
+Conirostrum tamarugense,comesebo de los tamarugales,EN,False,23.0,22,38.0,terrestrial,conservacion
+Cyanoliseus patagonus,tricahue,EN,False,55.0,14,414.0,terrestrial,conservacion
+Enicognathus leptorhynchus,choroy,LC,True,35.0,35,258.0,terrestrial,conservacion
+Laterallus jamaicensis,pidencito,EN,False,181.0,34,42.0,terrestrial,conservacion
+Limosa haemastica,"zarapito de pico recto, aguja café, becasina de mar, Hudsonian Godwit (inglés)",VU,False,31.0,4,261.0,coastal_shorebird,conservacion
+Podiceps gallardoi,"pimpollo tobiano, macá tobiano, Hooded Grebe (inglés)",CR,False,40.0,0,0.0,terrestrial,conservacion
+Rallus antarcticus,pidén austral,VU,False,22.0,16,24.0,terrestrial,conservacion
+Recurvirostra andina,caití,VU,False,32.0,6,130.0,coastal_shorebird,conservacion
+Mimus thenca,,,True,,48,,,endemica
+Ochetorhynchus melanurus,,,True,,34,,,endemica
+Pteroptochos castaneus,,,True,,41,,,endemica
+Pteroptochos megapodius,,,True,,86,,,endemica
+Scelorchilus albicollis,,,True,,65,,,endemica
+Scytalopus fuscus,,,True,,46,,,endemica
+Turdus falcklandii,,,False,,186,,,comun
+Aphrastura spinicauda,,,False,,105,,,comun
+Troglodytes aedon,,,False,,102,,,comun
+Zonotrichia capensis,,,False,,92,,,comun
+Scelorchilus rubecula,,,False,,92,,,comun
+Curaeus curaeus,,,False,,88,,,comun
+Elaenia chilensis,,,False,,85,,,comun
+Eugralla paradoxa,,,False,,84,,,comun
+Scytalopus magellanicus,,,False,,75,,,comun
+Leptasthenura aegithaloides,,,False,,68,,,comun
+Sephanoides sephaniodes,,,False,,67,,,comun
+Pseudasthenes humicola,,,False,,67,,,comun
+Anairetes parulus,,,False,,56,,,comun
+Sylviorthorhynchus desmurii,,,False,,55,,,comun
+Spinus barbatus,,,False,,54,,,comun
+Glaucidium nana,,,False,,54,,,comun
+Pteroptochos tarnii,,,False,,52,,,comun
+Phrygilus patagonicus,,,False,,51,,,comun
+Phrygilus gayi,,,False,,46,,,comun
+Pardirallus sanguinolentus,,,False,,45,,,comun
+Vanellus chilensis,,,False,,45,,,comun
+Geositta rufipennis,,,False,,44,,,comun
+Anthus correndera,,,False,,43,,,comun
+Veniliornis lignarius,,,False,,42,,,comun
+Diuca diuca,,,False,,41,,,comun
+Leistes loyca,,,False,,41,,,comun
+Strix rufipes,,,False,,39,,,comun
+Sicalis luteola,,,False,,38,,,comun
+Rhopospina fruticeti,,,False,,38,,,comun
+Pygarrhichas albogularis,,,False,,38,,,comun
+Pyrope pyrope,,,False,,37,,,comun
+Cinclodes fuscus,,,False,,36,,,comun
+Cinclodes patagonicus,,,False,,33,,,comun
+Tachycineta leucopyga,,,False,,32,,,comun
+Colorhamphus parvirostris,,,False,,32,,,comun

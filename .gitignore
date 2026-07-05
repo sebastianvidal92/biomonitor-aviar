@@ -1,0 +1,38 @@
+# Credenciales — NUNCA versionar
+.env
+*.cdsapirc
+.cdsapirc
+**/service-account*.json
+**/credentials*.json
+ee-credentials*
+secrets/*
+!secrets/.gitkeep
+
+# Datos (pesados) — fuera de git. Versionamos solo data/external/ (referencia liviana)
+data/raw/
+data/interim/
+data/processed/
+!data/external/
+!data/**/.gitkeep
+
+# Modelos entrenados (pesados)
+models/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Entorno Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.ruff_cache/
+
+# Documentos de oficina / entregables personales (pesados, no en el repo de código)
+*.pptx
+*.docx
+Seminario*.pdf
+
+# Sistema
+.DS_Store

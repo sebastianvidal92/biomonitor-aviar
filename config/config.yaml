@@ -1,0 +1,80 @@
+# Configuración central del proyecto. Editable sin tocar código.
+
+project:
+  name: "Monitoreo de Biodiversidad Aviar en Chile"
+  crs: "EPSG:4326"
+
+# Alcance geográfico: Chile continental (bounding box aproximado).
+# Excluye territorio antártico e insular oceánico para acotar descargas.
+region:
+  country_code: "CL"            # ISO-2, usado por eBird / GBIF
+  bbox:                         # [lon_min, lat_min, lon_max, lat_max]
+    lon_min: -75.7
+    lat_min: -56.0
+    lon_max: -66.4
+    lat_max: -17.5
+
+# Ventana temporal para avistamientos, clima y NDVI.
+time:
+  start: "2015-01-01"
+  end: "2024-12-31"
+
+# Objetivo del clasificador (Módulo 1).
+species:
+  target_count: 50              # mínimo del entregable
+  focus: ["endemica", "vulnerable", "en_peligro"]  # según RCE del MMA
+  # La lista final de especies se construye en data/external/species_list.csv
+
+# Parámetros de audio (Módulo 1).
+audio:
+  sample_rate: 32000
+  clip_seconds: 5
+  n_mels: 128
+  min_recordings_per_species: 20   # umbral de inclusión; especies raras usan data augmentation
+  augmentation: ["time_shift", "pitch_shift", "noise", "mixup"]  # para clases con pocos datos
+  max_recordings_per_species: 50   # tope de descarga por especie (balance + disco; WAV pesan)
+  max_length_seconds: 240          # descarta grabaciones más largas (evita WAV gigantes)
+  qualities: ["A", "B", "C"]       # calidad Xeno-canto a conservar (A=mejor)
+
+# Entrenamiento del clasificador de audio (Módulo 1).
+train_audio:
+  backbone: "efficientnet_b0"   # baseline CNN sobre espectrograma (timm)
+  batch_size: 32
+  epochs: 25
+  lr: 0.001
+  weight_decay: 0.01
+  num_workers: 4                # bajar a 0 si hay problemas de multiprocessing en macOS
+  mixup_alpha: 0.2              # mixup para regularizar el sobreajuste (0 = desactivado)
+  label_smoothing: 0.1
+
+# Entrenamiento del AST (transformer preentrenado en AudioSet) — comparación vs CNN.
+train_ast:
+  checkpoint: "MIT/ast-finetuned-audioset-10-10-0.4593"
+  clip_seconds: 10              # AST espera ~10 s (1024 frames a 16 kHz)
+  batch_size: 8                 # AST es pesado en memoria; subir si el Mac aguanta
+  epochs: 20                    # fine-tuning de modelo preentrenado: pocas épocas
+  lr: 2.0e-5
+  weight_decay: 0.01
+  num_workers: 4
+  label_smoothing: 0.1
+  max_windows_eval: 8           # ventanas por grabación en la evaluación agregada
+
+# Parámetros de imagen (Módulo 1).
+image:
+  size: 384
+  backbone: "efficientnet_b3"   # alternativa: vit_base_patch16
+
+# Parámetros del SDM (Módulo 2).
+sdm:
+  grid_resolution_km: 1.0
+  ndvi_collection: "COPERNICUS/S2_SR_HARMONIZED"
+  era5_variables:
+    - "2m_temperature"
+    - "total_precipitation"
+
+paths:
+  raw: "data/raw"
+  interim: "data/interim"
+  processed: "data/processed"
+  external: "data/external"
+  models: "models"

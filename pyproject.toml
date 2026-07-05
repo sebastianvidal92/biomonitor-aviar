@@ -1,0 +1,72 @@
+[project]
+name = "biomonitor-aviar"
+version = "0.1.0"
+description = "Sistema Inteligente de Monitoreo de Biodiversidad Aviar en Chile (MIA UC, titulación 2026)"
+authors = [{ name = "Sebastián Vidal", email = "svidals@estudiante.uc.cl" }]
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+
+# Dependencias núcleo: adquisición de datos (Hito 1). Livianas y de instalación rápida.
+dependencies = [
+    "python-dotenv>=1.0",
+    "pyyaml>=6.0",
+    "requests>=2.31",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "tqdm>=4.66",
+    "pygbif>=0.6",        # iNaturalist + eBird vía GBIF (occurrence downloads)
+    "ebird-api>=3.0",     # eBird API 2.0 (import: ebird.api)
+    "cdsapi>=0.7",        # ERA5 vía Copernicus Climate Data Store
+    "earthengine-api>=1.0",  # Sentinel-2 / NDVI vía Google Earth Engine
+    "openpyxl>=3.1.5",
+]
+
+[project.optional-dependencies]
+# Instalar cuando toque el SDM (Módulo 2) y manejo geoespacial:
+#   uv sync --extra geo
+geo = [
+    "geopandas>=1.0",
+    "shapely>=2.0",
+    "rasterio>=1.3",
+    "rioxarray>=0.15",
+    "xarray>=2024.0",
+    "netcdf4>=1.6",
+    "folium>=0.16",
+]
+# Instalar cuando toque entrenar (Módulos 1 y 2):
+#   uv sync --extra ml
+ml = [
+    "torch>=2.2",
+    "torchvision>=0.17",
+    "torchaudio>=2.2",      # resampleo + espectrograma mel (nativo, soporta MPS)
+    "timm>=1.0",            # EfficientNet / ViT (Módulo 1 imagen)
+    "transformers>=4.40",   # Audio Spectrogram Transformer / BEATs (Módulo 1 audio)
+    "soundfile>=0.12",      # cargar mp3/wav y escribir audio cacheado
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "seaborn>=0.13",
+]
+# Demo web (Hito 5):
+#   uv sync --extra app
+app = [
+    "streamlit>=1.35",
+    "folium>=0.16",
+    "streamlit-folium>=0.20",
+]
+
+[dependency-groups]
+dev = [
+    "jupyterlab>=4.0",
+    "ipykernel>=6.29",
+    "ruff>=0.5",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/biomonitor"]
+
+[tool.ruff]
+line-length = 100
