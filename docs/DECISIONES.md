@@ -59,9 +59,29 @@ Decisiones de diseño del proyecto y su justificación, para trazabilidad en el 
 - **Dos modelos:** baseline CNN (EfficientNet-B0) + AST (transformer), para la
   comparación que pide la propuesta. Resultado: ambos > 0.85; AST mejor pero ~20× más caro.
 
+## Módulo 1 — Imagen (ver [MODULO_IMAGEN.md](MODULO_IMAGEN.md))
+
+- **Fuente:** iNaturalist Research-grade vía GBIF (ID validado, geolocalizado, CC).
+- **Alias de taxonomía** para especies que iNat renombró (*Elaenia albiceps*,
+  *Sylviorthorhynchus desmursii*) y **fallback filtrado** (HUMAN_OBSERVATION, sin
+  museos ni espectrogramas) para especies escasas.
+- **53 especies** en el clasificador (se excluyen *Charadrius nivosus* y *Rallus
+  antarcticus* por <15 fotos → solo-audio, cubiertas por la fusión).
+- **Se acepta imagen-sola en TTA 0.848** (apenas bajo 0.85): la meta >0.85 es del
+  sistema **multimodal** (audio 0.858/0.868 + fusión la superan); la imagen-sola está
+  en su techo para este backbone/datos; un backbone in22k más fuerte es inviable
+  localmente (ConvNeXt ~8 h/época en el Mac) → posible en Colab si se quiere.
+- **Bug de macOS corregido:** `torch.multiprocessing.set_sharing_strategy("file_system")`
+  evita "Too many open files"; entrenamiento de imagen ahora reanudable (`--resume`).
+
+## Fusión multimodal (ver [MODULO_FUSION.md](MODULO_FUSION.md))
+
+- **Fusión tardía** (combinación ponderada de probabilidades), evaluada por **pareo por
+  especie** (datasets no pareados). Resultado: **fusión 0.950 > audio 0.867 > imagen 0.825**
+  → cumple la meta y valida la hipótesis multimodal. **Módulo 1 completo.**
+
 ## Pendientes / próximos
 
-- Módulo 1 imagen: descargar fotos (GBIF/iNaturalist), entrenar EfficientNet/ViT.
-- Fusión multimodal tardía audio + imagen.
 - Módulo 2 (SDM): eBird EBD + ERA5 + NDVI; comparar deep learning vs. MaxEnt.
 - Solicitar **eBird EBD** (aprobación humana, días) si no se ha hecho.
+- (Opcional) Imagen-sola >0.85 con backbone in22k en Colab/nube.

@@ -63,6 +63,21 @@ train_ast:
 image:
   size: 384
   backbone: "efficientnet_b3"   # alternativa: vit_base_patch16
+  max_per_species: 150          # tope de fotos por especie
+  min_per_species: 20           # umbral de descarga (dispara fallback a todo GBIF)
+  min_for_classifier: 15        # menos fotos → especie queda solo-audio (fusión multimodal)
+  source: "inaturalist_rg"      # GBIF: iNaturalist Research-grade (fotos con ID validado)
+
+# Entrenamiento del clasificador de imagen (Módulo 1).
+train_image:
+  backbone: "efficientnet_b3"
+  batch_size: 32
+  epochs: 30
+  lr: 0.0005
+  weight_decay: 0.01
+  num_workers: 4
+  label_smoothing: 0.1
+  mixup_alpha: 0.2
 
 # Parámetros del SDM (Módulo 2).
 sdm:

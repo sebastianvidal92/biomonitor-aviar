@@ -100,6 +100,7 @@ def run_epoch(model, loader, device, criterion, optimizer=None,
 
 def main() -> None:
     args = get_args()
+    torch.multiprocessing.set_sharing_strategy("file_system")  # evita 'Too many open files' en macOS
     device = pick_device()
     print(f"Dispositivo: {device} | backbone: {args.backbone}\n")
 

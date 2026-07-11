@@ -115,6 +115,7 @@ def evaluate_test(model, test_df, label_map, device, fe, max_windows):
 
 def main() -> None:
     args = get_args()
+    torch.multiprocessing.set_sharing_strategy("file_system")  # evita 'Too many open files' en macOS
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
     print(f"Dispositivo: {device} | modelo: AST ({CLIP_SECONDS}s @ {AST_SR}Hz)\n")
 
