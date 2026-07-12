@@ -233,6 +233,11 @@ target-group background (que ya está en Chile).
   - *Sentinel-2 RGB crudo:* se descartó — muestrear parches a escala es inviable localmente
     (timeout de GEE) y, dado lo anterior, casi seguro tampoco ayudaría. Queda como trabajo
     futuro en la nube.
+  - *¿Y si el problema era el desajuste temporal?* Se usaba una imagen satelital reciente fija
+    (2022/2023) para observaciones de cualquier año. Se probó **parear la imagen al año de la
+    observación** (2017-2025). El pareo ayudó marginalmente (embedding pareado 0.880 > fijo
+    0.877), pero **ninguno superó a la base sin satélite (0.881)** → el desajuste temporal era
+    un factor menor, no la causa; la causa es la redundancia.
 - **Conclusión (refuta H2 con evidencia):** para SDM de avifauna chilena con covariables
   ambientales fuertes, un **Random Forest** es la mejor opción; la complejidad extra (redes,
   imágenes) no se justifica.

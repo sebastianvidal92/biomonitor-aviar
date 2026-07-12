@@ -91,9 +91,14 @@ Detalle por especie en `reports/sdm_auc_por_especie.csv`, `sdm_ml_auc.csv`,
    suelo (CNN) como el embedding de 64-dim **degradaron** el desempeño por sobreajuste, y
    el embedding bajó incluso a los árboles. Las covariables ambientales ya capturan la
    señal relevante; la imagen satelital resulta redundante para este SDM.
-4. **Implicancia:** para SDM de avifauna chilena con buenas covariables ambientales, un
+4. **El desajuste temporal NO era la causa** (`scripts/25_temporal_sdm.py`). Se probó
+   parear la imagen satelital al **año de cada observación** (2017-2025) en vez de un
+   compuesto fijo. El pareo ayudó marginalmente (embedding pareado 0.880 > fijo 0.877,
+   +0.3 pts), confirmando que el desajuste temporal existía, pero **ninguna versión superó
+   a la base sin satélite (0.881)**. La causa real es la redundancia, no el desajuste.
+5. **Implicancia:** para SDM de avifauna chilena con buenas covariables ambientales, un
    Random Forest bien regularizado es la mejor opción; la complejidad extra (deep learning,
-   imágenes) no se justifica. (Trabajo futuro: RGB crudo de Sentinel-2 en la nube.)
+   imágenes satelitales) no se justifica. (Trabajo futuro: RGB crudo de Sentinel-2 en la nube.)
 
 ## 6. Reproducibilidad
 
@@ -107,6 +112,7 @@ uv run python scripts/18_extract_patches.py           # parches cobertura de sue
 uv run python scripts/19_train_sdm_multimodal.py      # DL + CNN
 uv run python scripts/20_extract_embedding.py         # embedding satelital 64-dim
 uv run python scripts/21_train_sdm_embedding.py       # DL + embedding
+uv run python scripts/25_temporal_sdm.py              # satélite pareado al año de la observación
 ```
 
 Hiperparámetros en `config/config.yaml` (`sdm`, `train_sdm`).

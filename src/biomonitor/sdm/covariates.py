@@ -48,6 +48,28 @@ def covariate_image() -> ee.Image:
     return ndvi.addBands([temp, precip, elev])
 
 
+def static_covariates() -> ee.Image:
+    """Covariables no temporales: temp y precip (WorldClim) + elevación (SRTM)."""
+    bio = ee.Image("WORLDCLIM/V1/BIO")
+    temp = bio.select("bio01").multiply(0.1).rename("temp")
+    precip = bio.select("bio12").rename("precip")
+    elev = ee.Image("USGS/SRTMGL1_003").select("elevation").rename("elev")
+    return temp.addBands([precip, elev])
+
+
+def ndvi_year(year: int) -> ee.Image:
+    """NDVI (MODIS) del año indicado — para pareo temporal con la observación."""
+    return (ee.ImageCollection("MODIS/061/MOD13A2")
+            .filterDate(f"{year}-01-01", f"{year + 1}-01-01")
+            .select("NDVI").mean().multiply(0.0001).rename("ndvi"))
+
+
+def embedding_year(year: int) -> ee.Image:
+    """Embedding satelital (64-dim) del año indicado — para pareo temporal."""
+    return (ee.ImageCollection("GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL")
+            .filterDate(f"{year}-01-01", f"{year + 1}-01-01").mosaic())
+
+
 def embedding_image() -> ee.Image:
     """Embedding satelital de Google (AlphaEarth, 64 bandas): representación aprendida
     de la imagen satelital por un foundation model. Rico y de muestreo liviano (mosaico)."""
