@@ -125,6 +125,11 @@ def main() -> None:
         scheduler.load_state_dict(st["sched"]); best_f1 = st["best_f1"]; start_epoch = st["epoch"] + 1
         print(f"Reanudando desde época {start_epoch} (best_f1={best_f1:.3f})\n")
 
+    log_dir = PROJECT_ROOT / "reports" / "training_logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_csv = log_dir / f"image_{args.backbone}.csv"
+    history = pd.read_csv(log_csv).to_dict("records") if (args.resume and log_csv.exists()) else []
+
     print(f"{'época':>6} {'tr_loss':>8} {'val_acc':>8} {'val_f1':>8}")
     for epoch in range(start_epoch, args.epochs + 1):
         t0 = time.time()
@@ -138,6 +143,8 @@ def main() -> None:
             flag = "★ best"
         torch.save({"model": model.state_dict(), "opt": optimizer.state_dict(),
                     "sched": scheduler.state_dict(), "epoch": epoch, "best_f1": best_f1}, ckpt_last)
+        history.append(dict(ep=epoch, tr_loss=tr_loss, val_acc=val_acc, val_f1=val_f1))
+        pd.DataFrame(history).to_csv(log_csv, index=False)  # incremental (sobrevive reanudación)
         print(f"{epoch:>6} {tr_loss:>8.3f} {val_acc:>8.3f} {val_f1:>8.3f}  {flag}  ({time.time()-t0:.0f}s)")
 
     model.load_state_dict(torch.load(ckpt, map_location=device))

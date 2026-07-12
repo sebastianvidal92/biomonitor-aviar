@@ -128,6 +128,7 @@ def main() -> None:
     models_dir.mkdir(parents=True, exist_ok=True)
     ckpt = models_dir / f"audio_{args.backbone}.pt"
     best_f1 = 0.0
+    history = []
 
     print(f"{'época':>6} {'tr_loss':>8} {'val_loss':>9} {'val_acc':>8} {'val_f1':>8}  {'':>4}")
     for epoch in range(1, args.epochs + 1):
@@ -141,8 +142,14 @@ def main() -> None:
             best_f1 = val_f1
             torch.save(model.state_dict(), ckpt)
             flag = "★ best"
+        history.append(dict(ep=epoch, tr_loss=tr_loss, val_loss=val_loss,
+                            val_acc=val_acc, val_f1=val_f1))
         print(f"{epoch:>6} {tr_loss:>8.3f} {val_loss:>9.3f} {val_acc:>8.3f} "
               f"{val_f1:>8.3f}  {flag:>6}  ({time.time()-t0:.0f}s)")
+
+    log_dir = PROJECT_ROOT / "reports" / "training_logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(history).to_csv(log_dir / f"audio_{args.backbone}.csv", index=False)
 
     # Evaluación final en test con el mejor checkpoint.
     model.load_state_dict(torch.load(ckpt, map_location=device))

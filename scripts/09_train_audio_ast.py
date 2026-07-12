@@ -139,6 +139,7 @@ def main() -> None:
     models_dir.mkdir(parents=True, exist_ok=True)
     ckpt = models_dir / "audio_ast.pt"
     best_f1 = 0.0
+    history = []
 
     print(f"{'época':>6} {'tr_loss':>8} {'val_acc':>8} {'val_f1':>8}")
     for epoch in range(1, args.epochs + 1):
@@ -151,7 +152,12 @@ def main() -> None:
             best_f1 = val_f1
             torch.save(model.state_dict(), ckpt)
             flag = "★ best"
+        history.append(dict(ep=epoch, tr_loss=tr_loss, val_acc=val_acc, val_f1=val_f1))
         print(f"{epoch:>6} {tr_loss:>8.3f} {val_acc:>8.3f} {val_f1:>8.3f}  {flag}  ({time.time()-t0:.0f}s)")
+
+    log_dir = PROJECT_ROOT / "reports" / "training_logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(history).to_csv(log_dir / "audio_ast.csv", index=False)
 
     model.load_state_dict(torch.load(ckpt, map_location=device))
     model.eval()
