@@ -1,0 +1,4 @@
+estrategia,accuracy,f1_macro
+Late fusion (promedio de decisiones),0.9308176100628931,0.9278428128939151
+Early fusion (concatenación temprana),0.929559748427673,0.9250603785855368
+Intermediate fusion (proyección + fusión),0.9056603773584906,0.898620269620702

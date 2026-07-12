@@ -48,7 +48,37 @@ sobre exactamente las mismas instancias pareadas.
 - Confirma que los errores de audio e imagen son **complementarios**: cuando una
   modalidad confunde congéneres (acústica o visualmente), la otra suele resolverlos.
 
-## 4. Notas y posibles mejoras
+## 4. Comparación de estrategias de fusión (late / early / intermediate)
+
+Además de la fusión tardía del sistema final, se compararon las tres estrategias clásicas
+de fusión **bajo condiciones idénticas** (`scripts/24_fusion_comparison.py`): mismos
+backbones ya entrenados (congelados como extractores de features), mismos pares por especie,
+y **cabezas de fusión con configuración idéntica** (40 épocas, lr 1e-3, batch 64). Así se
+aísla el efecto de la arquitectura de fusión:
+
+- **Late fusion** (decisión): un clasificador por modalidad → se promedian las probabilidades.
+- **Early fusion** (temprana): se concatenan los embeddings de audio (1280) e imagen (1536)
+  a la entrada de una única cabeza.
+- **Intermediate fusion** (intermedia): cada embedding pasa por una proyección propia, se
+  concatenan las proyecciones y una cabeza conjunta clasifica.
+
+| Estrategia | Accuracy | F1 macro |
+|---|---|---|
+| **Late fusion** (decisión) | **0.931** | 0.928 |
+| **Early fusion** (concatenación) | 0.930 | 0.925 |
+| Intermediate fusion (proyección) | 0.906 | 0.899 |
+
+**Hallazgos:**
+- **Late y early fusion empatan** (~0.93) y son las mejores: la forma más simple de combinar
+  (promediar decisiones o concatenar features) es suficiente y óptima.
+- **Intermediate fusion queda por debajo** (0.906): las proyecciones por modalidad agregan
+  parámetros que sobreajustan con los datos pareados limitados, y como los embeddings ya son
+  de alto nivel, esa transformación extra no aporta.
+- Refuerza la elección de **late fusion** para el sistema final. (Nota: estos números usan
+  cabezas entrenadas sobre embeddings congelados; el 0.950 del §3 promedia los softmax de los
+  modelos completos, sin cabeza extra — coherente y algo superior.)
+
+## 5. Notas y posibles mejoras
 
 - La rama de imagen usa single-crop en la fusión; con TTA (10-crop) el techo sería aún
   algo mayor.
@@ -57,11 +87,12 @@ sobre exactamente las mismas instancias pareadas.
 - El peso `w` es ajustable (`--w-audio`); 0.5 ya da 0.950. Un barrido de `w` puede
   reportarse en el informe como análisis de sensibilidad.
 
-## 5. Reproducibilidad
+## 6. Reproducibilidad
 
 ```bash
-uv run python scripts/13_multimodal_fusion.py                 # w_audio = 0.5
+uv run python scripts/13_multimodal_fusion.py                 # fusión tardía (sistema final)
 uv run python scripts/13_multimodal_fusion.py --w-audio 0.6   # ajustar peso
+uv run python scripts/24_fusion_comparison.py                 # late vs early vs intermediate
 ```
 
 Requiere los modelos entrenados: `models/audio_efficientnet_b0.pt` y

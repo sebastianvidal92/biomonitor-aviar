@@ -33,6 +33,8 @@ __pycache__/
 *.pptx
 *.docx
 Seminario*.pdf
+# captura de referencia de la paleta (no es asset)
+marca_uc/Captura*
 
 # Sistema
 .DS_Store

@@ -53,7 +53,9 @@ uv sync --extra app     # demo web (Streamlit)
 (>0.85). Módulo 2: los ensambles de árboles superan a MaxEnt; el DL y las features
 satelitales no aportan (hallazgo documentado).
 
-Detalle completo (datos, hiperparámetros, métricas, análisis):
+📄 **Informe técnico completo (la historia del proyecto de punta a punta): [docs/INFORME.md](docs/INFORME.md)**
+
+Detalle por módulo (datos, hiperparámetros, métricas, análisis):
 **[audio](docs/MODULO_AUDIO.md)** · **[imagen](docs/MODULO_IMAGEN.md)** · **[fusión](docs/MODULO_FUSION.md)** · **[SDM](docs/MODULO_SDM.md)**.
 Decisiones de diseño y su justificación: **[docs/DECISIONES.md](docs/DECISIONES.md)**.
 
