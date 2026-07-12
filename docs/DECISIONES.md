@@ -80,8 +80,21 @@ Decisiones de diseño del proyecto y su justificación, para trazabilidad en el 
   especie** (datasets no pareados). Resultado: **fusión 0.950 > audio 0.867 > imagen 0.825**
   → cumple la meta y valida la hipótesis multimodal. **Módulo 1 completo.**
 
+## Módulo 2 — SDM (ver [MODULO_SDM.md](MODULO_SDM.md))
+
+- **Fuente de presencia:** GBIF (eBird+iNaturalist), no el EBD (no requiere aprobación).
+  **Fondo:** target-group background (corrige sesgo de muestreo).
+- **Covariables vía GEE:** NDVI (MODIS), temp+precip (WorldClim BIO), elevación (SRTM).
+  ERA5/Sentinel-2 se descartaron: su muestreo a escala hace timeout en GEE.
+- **Resultado:** Random Forest / Gradient Boosting (0.884/0.883 AUC) **superan a MaxEnt
+  (0.863)**; la red neuronal (0.849) no. Datos satelitales no estructurados (parche
+  land-cover CNN, embedding 64-dim) **no ayudan** (sobreajuste/redundancia). Hallazgo
+  honesto y documentado.
+- RGB crudo de Sentinel-2 (Colab) descartado: si el embedding rico no aporta ni a los
+  árboles, un CNN sobre S2 tampoco. Queda como trabajo futuro.
+
 ## Pendientes / próximos
 
-- Módulo 2 (SDM): eBird EBD + ERA5 + NDVI; comparar deep learning vs. MaxEnt.
-- Solicitar **eBird EBD** (aprobación humana, días) si no se ha hecho.
-- (Opcional) Imagen-sola >0.85 con backbone in22k en Colab/nube.
+- Prototipo web (Streamlit): subir audio/foto → especie + mapa de distribución.
+- Informe final.
+- (Trabajo futuro) RGB crudo Sentinel-2 en la nube para el SDM.

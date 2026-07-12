@@ -86,6 +86,20 @@ sdm:
   era5_variables:
     - "2m_temperature"
     - "total_precipitation"
+  max_occurrences_per_species: 2000   # tope de puntos de presencia por especie
+  min_occurrences: 20                 # mínimo para modelar una especie
+  presence_cap_per_species: 500       # thinning para el SDM (reduce sesgo de muestreo)
+  background_points: 10000            # puntos de fondo (pseudo-ausencias) en Chile
+
+# Entrenamiento del SDM (Módulo 2): DL conjunto vs MaxEnt por especie.
+train_sdm:
+  hidden: 64
+  emb_dim: 8
+  epochs: 40
+  lr: 0.001
+  batch_size: 512
+  test_frac: 0.3
+  background_per_species: 1500
 
 paths:
   raw: "data/raw"

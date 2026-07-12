@@ -47,13 +47,14 @@ uv sync --extra app     # demo web (Streamlit)
 | **1a — Clasificador de audio** | ✅ completo | **AST 0.868 · CNN 0.858** acc en test (agregado) |
 | **1b — Clasificador de imagen** | ✅ completo | **0.848** acc en test (TTA, 53 especies) |
 | **1c — Fusión multimodal** | ✅ completo | **0.950** acc (fusión > audio 0.867 > imagen 0.825) |
-| 2 — SDM espaciotemporal | ⬜ siguiente | — |
+| **2 — SDM espaciotemporal** | ✅ completo | **Random Forest 0.884 AUC > MaxEnt 0.863** |
 
-**Módulo 1 cerrado:** la fusión multimodal (0.950) supera a cada modalidad y cumple la
-meta del entregable (>0.85) con holgura, validando la hipótesis multimodal.
+**Ambos módulos cerrados.** Módulo 1: la fusión multimodal (0.950) supera a cada modalidad
+(>0.85). Módulo 2: los ensambles de árboles superan a MaxEnt; el DL y las features
+satelitales no aportan (hallazgo documentado).
 
-Detalle completo (datos, hiperparámetros, épocas, métricas, análisis de errores):
-**[audio](docs/MODULO_AUDIO.md)** · **[imagen](docs/MODULO_IMAGEN.md)** · **[fusión](docs/MODULO_FUSION.md)**.
+Detalle completo (datos, hiperparámetros, métricas, análisis):
+**[audio](docs/MODULO_AUDIO.md)** · **[imagen](docs/MODULO_IMAGEN.md)** · **[fusión](docs/MODULO_FUSION.md)** · **[SDM](docs/MODULO_SDM.md)**.
 Decisiones de diseño y su justificación: **[docs/DECISIONES.md](docs/DECISIONES.md)**.
 
 > La meta *">85% accuracy"* del entregable es para el **sistema multimodal**: el audio
@@ -78,6 +79,11 @@ Decisiones de diseño y su justificación: **[docs/DECISIONES.md](docs/DECISIONE
 12_train_image.py         entrena el clasificador de imagen (EfficientNet/ViT)
 13_multimodal_fusion.py   fusión tardía audio + imagen (evaluación por pareo)
 14_evaluate_image.py      evalúa imagen con TTA (10-crop) + F1 por especie
+15_download_occurrences.py avistamientos para el SDM (GBIF)
+16_extract_covariates.py  covariables ambientales por punto (GEE)
+17_train_sdm.py           SDM: MaxEnt vs deep learning conjunto
+18-21 (…)                 experimentos multimodales del SDM (parches / embedding satelital)
+22_train_sdm_ml.py        SDM: MaxEnt vs Random Forest vs Gradient Boosting
 ```
 
 ## Estructura
@@ -100,6 +106,6 @@ secrets/             credenciales locales (en .gitignore)
 1. ✅ **Datos** — recopilación y preprocesamiento (55 especies; 2.508 audios + 7.068 fotos)
 2. ✅ **Clasificador de audio** — CNN + AST, ambos > 0.85 accuracy
 3. ✅ **Clasificador de imagen (0.848) + fusión multimodal (0.950)** — Módulo 1 completo
-4. ⬜ **SDM espaciotemporal**
-5. ⬜ **Prototipo web (demo)**
+4. ✅ **SDM espaciotemporal** — Random Forest 0.884 AUC > MaxEnt 0.863
+5. ⬜ **Prototipo web (demo)** — siguiente
 6. ⬜ **Informe final y documentación**
