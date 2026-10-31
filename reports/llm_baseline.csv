@@ -1,0 +1,3 @@
+modo,modelo,esfuerzo,n,accuracy,f1_macro,invalidas,latencia_s_mediana,costo_usd,tokens_input,tokens_output,tokens_cache_read,tokens_cache_write,f1_Amenazada,f1_Endémica,f1_Común
+zeroshot,claude-opus-5-5,low,1040,0.8028846153846154,0.7651813872447287,4,2.3551883329928387,2.19,280496,30679,2280236,0,0.839,0.498,0.795
+fewshot,claude-opus-5-5,low,1040,0.8173076923076923,0.7793839294019812,0,2.6578785210003844,4.27,324060,48722,9742703,9377,0.837,0.567,0.804

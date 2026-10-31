@@ -6,6 +6,7 @@ F1 por especie (a CSV) y las peores clases.
 
     uv run python scripts/14_evaluate_image.py
     uv run python scripts/14_evaluate_image.py --backbone efficientnet_b3
+    uv run python scripts/14_evaluate_image.py --backbone vit_small_patch16_224.augreg_in21k_ft_in1k --size 224
 """
 
 from __future__ import annotations
@@ -32,20 +33,18 @@ from biomonitor.vision.model import build_image_model  # noqa: E402
 def get_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--backbone", default=CONFIG["train_image"]["backbone"])
+    p.add_argument("--size", type=int, default=SIZE, help="lado de la imagen de entrada (igual que en el entrenamiento)")
     return p.parse_args()
 
 
-_resize = transforms.Resize(int(SIZE * 1.15))
-_tencrop = transforms.TenCrop(SIZE)
-_center = transforms.CenterCrop(SIZE)
 _norm = transforms.Compose([transforms.ToTensor(), transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)])
 
 
-def views(img: Image.Image) -> tuple[torch.Tensor, torch.Tensor]:
+def views(img: Image.Image, size: int = SIZE) -> tuple[torch.Tensor, torch.Tensor]:
     """Devuelve (vista central [1,3,H,W], 10 vistas TTA [10,3,H,W])."""
-    r = _resize(img)
-    center = _norm(_center(r)).unsqueeze(0)
-    tta = torch.stack([_norm(c) for c in _tencrop(r)])
+    r = transforms.Resize(int(size * 1.15))(img)
+    center = _norm(transforms.CenterCrop(size)(r)).unsqueeze(0)
+    tta = torch.stack([_norm(c) for c in transforms.TenCrop(size)(r)])
     return center, tta
 
 
@@ -71,7 +70,7 @@ def main() -> None:
                 img = Image.open(PROJECT_ROOT / r.file).convert("RGB")
             except Exception:  # noqa: BLE001
                 continue
-            center, tta = views(img)
+            center, tta = views(img, args.size)
             p_center = model(center.to(device)).softmax(1)[0]
             p_tta = model(tta.to(device)).softmax(1).mean(0)
             y_true.append(label_map[r.scientific_name])

@@ -1,0 +1,308 @@
+%=======================================================================
+% cap2_trabajo_relacionado.tex
+%=======================================================================
+
+Este capítulo revisa el estado del arte en las áreas que sustentan el
+proyecto, avanzando desde lo general a lo específico, e identifica la brecha
+de la literatura que ofrece la oportunidad de investigación. La revisión se
+organiza en tres subáreas: identificación de aves por audio (bioacústica
+computacional), identificación por imagen (incluida la fusión multimodal) y
+modelos de distribución de especies (SDM). Cada sección describe brevemente la técnica,
+revisa los trabajos más influyentes y destaca los aspectos que condicionan el
+diseño de esta propuesta. El capítulo cierra con una tabla comparativa
+(\tabref{tab:brecha}) y la formulación explícita de la brecha.
+
+%-----------------------------------------------------------------------
+\section{Identificación de aves por audio (bioacústica computacional)}
+\label{sec:rel-audio}
+
+La bioacústica computacional estudia la detección y clasificación automática
+de sonidos animales a partir de grabaciones. Su desarrollo con aprendizaje
+profundo ha seguido de cerca al de la clasificación general de audio: la
+señal se transforma en una representación tiempo--frecuencia (habitualmente
+un espectrograma en escala mel, \secref{sec:teoria-audio}), que se procesa como una imagen mediante redes
+convolucionales (CNN, \secref{sec:teoria-cnn}) o, más recientemente, mediante
+\textit{transformers} de audio (\secref{sec:teoria-transformers}).
+
+\subsection*{Representaciones de entrada}
+
+El espectrograma mel comprime el eje de frecuencia según una escala
+perceptual y expresa la energía en escala logarítmica, lo que concentra la
+información relevante para vocalizaciones animales y permite reutilizar
+arquitecturas de visión por computador. En este proyecto se adopta el
+espectrograma log-mel como representación principal por su compatibilidad
+con los modelos preentrenados que se describen a continuación.
+
+\subsection*{Preentrenamiento a gran escala y modelos de referencia}
+
+La disponibilidad de AudioSet, un catálogo de más de dos millones de clips
+de audio anotados con 527 clases de sonidos \citep{gemmeke2017audioset},
+permitió demostrar que las arquitecturas CNN diseñadas para imágenes
+se transfieren de forma efectiva a la clasificación de audio. Sobre esta base se construyeron familias de modelos
+de audio preentrenados. Posteriormente, el \textit{Audio Spectrogram
+Transformer} (AST) aplicó directamente un \textit{Vision Transformer} a
+parches del espectrograma y alcanzó el estado del arte en AudioSet
+\citep{gong2021ast}. Su arquitectura se describe en la
+\secref{sec:teoria-transformers}. Estos modelos son candidatos naturales para
+la identificación bioacústica de especies, dado que sus representaciones
+internas codifican patrones espectrotemporales genéricos que pueden
+especializarse con relativamente pocos datos.
+
+En el dominio específico de las aves, BirdNET es el modelo más difundido:
+una red convolucional profunda con conexiones residuales
+(\secref{sec:teoria-cnn}) entrenada sobre espectrogramas de Xeno-canto y
+otras colecciones, que en su versión original reconocía 984 especies de
+Norteamérica y Europa en grabaciones de campo \citep{kahl2021birdnet}. Las
+versiones posteriores superan las \num{6000} especies. Su adopción en
+monitoreo acústico pasivo es masiva, pero su desempeño varía fuertemente
+entre especies y contextos, por lo que debe validarse localmente antes de
+usarse para inferencia ecológica. La
+primera evaluación mundial de BirdNET, con \num{4224} grabaciones de 67
+sitios en todos los continentes anotadas por expertos locales, confirmó esta
+heterogeneidad (\tabref{tab:birdnet}): el desempeño es máximo en los
+continentes de donde provienen la mayoría de sus datos de entrenamiento y
+cae en Sudamérica \citep{funosas2026birdnet}. Estos resultados justifican
+entrenar o adaptar modelos específicos para la avifauna chilena en lugar de
+depender de un clasificador global.
+
+\begin{table}[H]
+  \centering\small
+  \caption{Desempeño de BirdNET por región en la evaluación mundial de
+  \citet{funosas2026birdnet}: área bajo la curva precisión--\textit{recall}
+  (AUC-PR) por continente; el \textit{recall} varía entre 0,24 y 0,52 según
+  el continente.}
+  \label{tab:birdnet}
+  \begin{tabular}{@{}l l l@{}}
+    \toprule
+    Región & AUC-PR & Cobertura en los datos de entrenamiento \\
+    \midrule
+    Norteamérica, Oceanía y Europa & 0,16--0,23 & alta \\
+    Centro y Sudamérica & 0,13 & moderada \\
+    África y Asia & inferior a 0,13 & baja \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection*{\textit{Embeddings} bioacústicos transferibles}
+
+Una línea reciente muestra que los clasificadores de aves a gran escala
+producen \textit{embeddings} que se transfieren mejor a nuevas tareas
+bioacústicas que los de modelos de audio general: entrenando clasificadores
+lineales sobre las representaciones de BirdNET y de Perch (un modelo de
+Google entrenado en Xeno-canto), Ghani \etal\ obtuvieron desempeño superior
+a AudioMAE y otros modelos generativos en tareas de aves, anfibios,
+mamíferos marinos e insectos, incluso en régimen de pocos ejemplos por clase
+\citep{ghani2023embeddings}. El \textit{benchmark} BIRB formaliza esta
+evaluación como un problema de recuperación de información con
+desplazamiento de distribución entre grabaciones focales y paisajes sonoros
+\citep{hamer2023birb}. Esta evidencia importa para las especies con pocas grabaciones, como las
+amenazadas de Chile, y justifica considerar el \textit{fine-tuning} de
+modelos preentrenados en aves como estrategia complementaria al AST.
+
+\subsection*{Evaluación en condiciones de campo y \textit{benchmarks}}
+
+Los desafíos anuales BirdCLEF son el \textit{benchmark} de referencia: sus ediciones recientes plantean la identificación de especies en
+paisajes sonoros continuos de regiones con pocos datos (por ejemplo, África
+oriental en 2023), donde los participantes deben lidiar con etiquetas
+débiles, solapamiento de vocalizaciones y desplazamiento de dominio entre
+las grabaciones focales de Xeno-canto usadas para entrenar y los paisajes
+sonoros de prueba \citep{kahl2023birdclef}. Las soluciones ganadoras
+combinan CNN preentrenadas, aumentación de datos y ensamblado de modelos.
+Xeno-canto, la fuente principal de estos desafíos y de este proyecto, es una
+colección de ciencia ciudadana con anotación débil (una especie focal por
+grabación, con posibles especies de fondo), duración muy variable y fuerte
+desbalance entre especies \citep{vellinga2015xenocanto}.
+
+\subsection*{Desbalance y clases con pocos ejemplos}
+
+El desbalance de clases es inherente a los datos bioacústicos: las especies
+comunes acumulan miles de grabaciones y las raras apenas decenas. Entre las
+estrategias establecidas está la aumentación en el dominio del
+espectrograma, como SpecAugment, que enmascara bandas de tiempo y frecuencia
+\citep{park2019specaugment}. Otra es la interpolación de ejemplos mediante
+\textit{mixup} \citep{zhang2018mixup}. Una tercera son las funciones de
+pérdida que reponderan las clases, como la pérdida focal
+\citep{lin2017focal} o la pérdida balanceada por número efectivo de
+muestras \citep{cui2019classbalanced}. Estas técnicas conectan directamente con el
+hallazgo de escasez de audio en especies amenazadas que se reporta en el
+\capref{cap:datos}.
+
+%-----------------------------------------------------------------------
+\section{Identificación de aves por imagen y fusión multimodal}
+\label{sec:rel-imagen}
+
+\subsection*{Clasificación \textit{fine-grained}}
+
+La identificación de aves por fotografía es el caso paradigmático de la
+clasificación visual \textit{fine-grained}: distinguir subcategorías de una
+misma clase de objetos (especies dentro del grupo ``aves'') que comparten la
+estructura global y difieren en detalles locales, como la forma del pico o
+los patrones del plumaje, con alta variabilidad dentro de cada clase por
+pose, iluminación y fondo. El conjunto
+CUB-200-2011, con \num{11788} imágenes de 200 especies norteamericanas, ha
+sido durante más de una década el \textit{benchmark} de referencia.
+iNaturalist 2017, con más de \num{850000} imágenes de \num{5089} especies y
+datos fuertemente desbalanceados entre clases, acercó el problema a las
+condiciones reales de los datos de ciencia ciudadana
+\citep{vanhorn2018inaturalist}. En ambos, el \textit{transfer learning}
+desde modelos preentrenados en ImageNet es la práctica estándar. Las
+arquitecturas residuales establecieron la base. EfficientNet introdujo el
+escalado compuesto de profundidad, ancho y resolución, con mejor precisión y
+menos parámetros \citep{tan2019efficientnet}. El \textit{Vision Transformer}
+mostró que un \textit{transformer} aplicado a parches de imagen supera a las
+CNN cuando se preentrena a gran escala \citep{dosovitskiy2021vit}. Las bases
+de estas arquitecturas se presentan en el \capref{cap:teoria}.
+
+\subsection*{Estrategias de fusión multimodal}
+
+El aprendizaje multimodal busca representar y combinar información de
+distintas modalidades. Según el momento en que ocurre esa combinación,
+\citet{baltrusaitis2019multimodal} distinguen tres estrategias:
+\textit{early}, \textit{intermediate} y \textit{late fusion}. La primera
+concatena las características de entrada y entrena un único clasificador. La
+segunda hace interactuar las representaciones latentes de cada rama antes de
+decidir. La tercera entrena un clasificador por modalidad y combina sus
+probabilidades. Esta última es robusta cuando falta una modalidad en
+inferencia, porque basta usar la predicción del clasificador disponible,
+permite entrenar cada rama con datos no emparejados y es simple de calibrar.
+Su limitación es que no modela interacciones de bajo nivel entre las señales
+de entrada. Las tres se formalizan en la \secref{sec:teoria-fusion} y se
+comparan empíricamente en el \capref{cap:resultados}.
+
+\subsection*{Fusión audio--imagen en fauna}
+
+La literatura que combina audio e imagen para identificación de animales es
+reciente y limitada. El \textit{benchmark} SSW60 (Sapsucker Woods 60), de
+Cornell, es el primer conjunto que permite clasificar las mismas 60 especies
+de aves en imagen, audio y video. Sus autores muestran que la fusión
+audiovisual supera a cada modalidad por separado y que el conocimiento
+se transfiere entre modalidades \citep{vanhorn2022ssw60}. Pero sus especies son
+norteamericanas y sus datos audiovisuales provienen de video emparejado. No se identificaron trabajos que combinen audio e imagen para
+avifauna sudamericana ni que lo hagan a partir de fuentes no emparejadas
+(Xeno-canto e iNaturalist), como propone este proyecto.
+
+%-----------------------------------------------------------------------
+\section{Modelos de distribución de especies (SDM)}\label{sec:rel-sdm}
+
+Los SDM relacionan registros de ocurrencia de una especie con variables
+ambientales para estimar su distribución potencial en el espacio y,
+eventualmente, en el tiempo. Constituyen una
+herramienta central de la ecología y la planificación de la conservación.
+
+\subsection*{MaxEnt y el problema de solo presencia}
+
+La mayoría de los datos disponibles, incluidos los de ciencia ciudadana,
+son de solo presencia: registran dónde se observó una especie, pero no dónde
+se buscó sin éxito. MaxEnt aborda este problema con una idea simple: entre todas las formas de
+repartir la probabilidad de presencia sobre el territorio, elige la más
+``neutra'' posible (la de máxima entropía) que sea compatible con lo
+observado, es decir, con que las condiciones ambientales promedio de los
+sitios donde se vio la especie coincidan con las del modelo. El resultado es
+una probabilidad de presencia que crece de forma exponencial con una
+combinación de las covariables, formalmente equivalente a una regresión
+logística o de Poisson regularizada \citep{phillips2006maxent}. La
+\secref{sec:teoria-sdm} presenta sus ecuaciones. Un \textit{benchmark} reciente con
+código reproducible confirma que MaxEnt bien configurado sigue estando entre
+los métodos de mejor desempeño para datos de solo presencia, junto con
+\textit{boosted regression trees} y ensambles \citep{valavi2022benchmark}, lo
+que lo convierte en un \textit{baseline} exigente y no trivial.
+
+\subsection*{Sesgo de muestreo y pseudoausencias}
+
+Como los datos solo dicen dónde se vio a la especie, el modelo necesita
+puntos de contraste, las \emph{pseudoausencias} o puntos de fondo, que
+representan los lugares donde la especie podría no estar. Si esos puntos se
+reparten al azar por el territorio aparece un problema: los registros de
+ciencia ciudadana se concentran en zonas accesibles y pobladas, de modo que
+el modelo aprende dónde hay observadores en lugar de dónde hay hábitat
+adecuado. La solución más usada es elegir los puntos de fondo con el mismo
+sesgo que las presencias, por ejemplo, a partir de registros de otras
+especies del mismo grupo, lo que mejora sustancialmente las predicciones
+\citep{phillips2009bias}. La \figref{fig:fondo-objetivo} del
+\capref{cap:teoria} ilustra la diferencia. El número y la ubicación de las
+pseudoausencias también influyen en el desempeño, y para eBird existen guías
+que recomiendan filtrar por protocolo y esfuerzo y submuestrear espacialmente
+\citep{johnston2021ebird}.
+
+\subsection*{SDM con aprendizaje profundo}
+
+Los SDM neuronales reemplazan las funciones de respuesta paramétricas de la
+regresión (una curva fija por covariable) por redes que aprenden
+interacciones no lineales entre covariables y que pueden compartir
+representaciones entre muchas especies, como se formaliza en la
+\secref{sec:teoria-sdm}. Botella \etal\ propusieron
+el primer enfoque de este tipo a escala continental \citep{botella2018deepsdm}.
+Deneu \etal\ demostraron que las CNN que reciben parches de imágenes
+ambientales alrededor de cada ocurrencia superan a los modelos puntuales al
+capturar la estructura espacial del paisaje \citep{deneu2021cnn}.
+Estopinan \etal\ mostraron que incorporar series temporales de Sentinel-2
+aporta información estacional que beneficia especialmente a las especies con
+pocas ocurrencias \citep{estopinan2022sentinel}. En paralelo, las
+representaciones neuronales implícitas espaciales (SINR) codifican
+directamente coordenadas y fecha en una red multiespecie entrenada con
+registros de iNaturalist, produciendo mapas globales de miles de especies
+\citep{cole2023sinr}. Específicamente para aves, SatBird combina imágenes
+satelitales y datos de eBird en un conjunto de referencia para predecir tasas
+de encuentro de cientos de especies \citep{teng2024satbird}.
+
+\subsection*{Validación espacial}
+
+Los datos de ocurrencia presentan autocorrelación espacial: registros
+cercanos comparten ambiente y, si se reparten al azar entre entrenamiento y
+prueba, el modelo obtiene estimaciones de desempeño optimistas. Roberts
+\etal\ argumentan que la validación cruzada debe respetar la estructura de
+los datos mediante bloques espaciales, temporales o jerárquicos
+\citep{roberts2017crossvalidation}. El paquete \texttt{blockCV} implementa
+la generación de \textit{folds} espacialmente separados y la estimación del rango de
+autocorrelación para dimensionar los bloques \citep{valavi2019blockcv}. Este
+protocolo se adopta para la comparación entre el SDM neuronal y MaxEnt.
+
+%-----------------------------------------------------------------------
+\section{Brecha de la literatura}\label{sec:brecha}
+
+La \tabref{tab:brecha} resume los trabajos más representativos revisados,
+según modalidad, región geográfica, número de especies y tarea abordada.
+
+\begin{table}[!htb]
+  \centering\footnotesize
+  \caption{Comparación del trabajo relacionado y posicionamiento de esta
+  propuesta.}
+  \label{tab:brecha}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash\hsize=1.25\hsize}X
+    >{\raggedright\arraybackslash\hsize=0.9\hsize}X
+    >{\raggedright\arraybackslash\hsize=0.85\hsize}X
+    r
+    >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Trabajo & Modalidad & Región & N.º esp. & Tarea \\
+    \midrule
+    \citet{kahl2021birdnet} (BirdNET) & Audio & Norteamérica, Europa & 984 & Clasificación \\
+    \citet{ghani2023embeddings} & Audio & Global (Xeno-canto) & $>$\num{10000} & Transferencia de \textit{embeddings} \\
+    \citet{kahl2023birdclef} (BirdCLEF) & Audio & África oriental & 264 & Detección en paisajes sonoros \\
+    \citet{wah2011cub} (CUB-200) & Imagen & Norteamérica & 200 & Clasificación \textit{fine-grained} \\
+    \citet{vanhorn2018inaturalist} & Imagen & Global & \num{5089} & Clasificación con datos desbalanceados \\
+    \citet{vanhorn2022ssw60} (SSW60) & Audio, imagen, video & Norteamérica & 60 & Clasificación audiovisual \\
+    \citet{phillips2006maxent} (MaxEnt) & Ambiental & General & n.a. & Distribución (solo presencia) \\
+    \citet{deneu2021cnn} & Ambiental (parches) & Francia & miles (flora) & Distribución (SDM profundo) \\
+    \citet{cole2023sinr} (SINR) & Coordenadas + fecha & Global & \num{47375} & Distribución multiespecie \\
+    \citet{teng2024satbird} (SatBird) & Satelital + eBird & EE.\,UU./Kenia & 670 & Tasas de encuentro \\
+    \midrule
+    \textbf{Este trabajo} & \textbf{Audio, imagen, ambiental} & \textbf{Chile continental} & \textbf{55} & \textbf{Clasificación + distribución} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+A partir de esta revisión se identifican tres brechas concretas. La primera
+es geográfica: los clasificadores bioacústicos y visuales de referencia se
+entrenan y evalúan sobre avifaunas de Norteamérica y Europa, y la evidencia
+global muestra que su desempeño se degrada en Sudamérica. No se identificaron
+modelos entrenados para las especies chilenas amenazadas. La segunda es de
+modalidad: la fusión de audio e imagen en fauna se ha explorado únicamente
+con datos emparejados de especies norteamericanas, sin trabajos que la
+apliquen a fuentes de ciencia ciudadana no emparejadas ni a avifaunas del
+hemisferio sur. La tercera es de método: los SDM con aprendizaje profundo son
+un área emergente que aún no se ha aplicado a la distribución de aves en
+Chile, donde la práctica sigue apoyándose en MaxEnt. No existe, por tanto, un
+sistema integrado que combine identificación multimodal y modelado de
+distribución con aprendizaje profundo para la avifauna chilena. Esa es la
+oportunidad que aborda este proyecto.

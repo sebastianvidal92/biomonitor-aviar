@@ -1,0 +1,56 @@
+scientific_name,common_name,category_primary,endemic,xc_global,xc_chile,gbif_photos_cl,habitat_group,role,cat_rce,cat,grupo
+Anous stolidus,gaviotín de San Félix,VU,False,41.0,0,11.0,coastal_shorebird,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Calidris canutus,playero ártico,EN,False,311.0,0,21.0,coastal_shorebird,conservacion,EN,EN,Amenazada (CR/EN/VU)
+Charadrius nivosus,chorlo nevado,VU,False,39.0,0,2.0,coastal_shorebird,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Podiceps gallardoi,"pimpollo tobiano, macá tobiano, Hooded Grebe (inglés)",CR,False,40.0,0,0.0,terrestrial,conservacion,CR,CR,Amenazada (CR/EN/VU)
+Agriornis albicauda,mero de la puna,VU,False,23.0,2,5.0,terrestrial,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Limosa haemastica,"zarapito de pico recto, aguja café, becasina de mar, Hudsonian Godwit (inglés)",VU,False,31.0,4,261.0,coastal_shorebird,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Recurvirostra andina,caití,VU,False,32.0,6,130.0,coastal_shorebird,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Chloephaga picta,"caiquén, cauquén común",VU,False,38.0,14,991.0,terrestrial,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Cyanoliseus patagonus,tricahue,EN,False,55.0,14,414.0,terrestrial,conservacion,EN,EN,Amenazada (CR/EN/VU)
+Rallus antarcticus,pidén austral,VU,False,22.0,16,24.0,terrestrial,conservacion,VU,VU,Amenazada (CR/EN/VU)
+Chloephaga melanoptera,"piuquén, piquén, guayata",EN,False,55.0,17,421.0,terrestrial,conservacion,EN,EN,Amenazada (CR/EN/VU)
+Conirostrum tamarugense,comesebo de los tamarugales,EN,False,23.0,22,38.0,terrestrial,conservacion,EN,EN,Amenazada (CR/EN/VU)
+Colorhamphus parvirostris,,,False,,32,,,comun,,NE,Común
+Tachycineta leucopyga,,,False,,32,,,comun,,NE,Común
+Cinclodes patagonicus,,,False,,33,,,comun,,NE,Común
+Ochetorhynchus melanurus,,,True,,34,,,endemica,,NE,Endémica
+Laterallus jamaicensis,pidencito,EN,False,181.0,34,42.0,terrestrial,conservacion,EN,EN,Amenazada (CR/EN/VU)
+Enicognathus leptorhynchus,choroy,LC,True,35.0,35,258.0,terrestrial,conservacion,LC,LC,Endémica
+Cinclodes fuscus,,,False,,36,,,comun,,NE,Común
+Pyrope pyrope,,,False,,37,,,comun,,NE,Común
+Rhopospina fruticeti,,,False,,38,,,comun,,NE,Común
+Pygarrhichas albogularis,,,False,,38,,,comun,,NE,Común
+Sicalis luteola,,,False,,38,,,comun,,NE,Común
+Strix rufipes,,,False,,39,,,comun,NT,NT,Común
+Leistes loyca,,,False,,41,,,comun,,NE,Común
+Diuca diuca,,,False,,41,,,comun,,NE,Común
+Pteroptochos castaneus,,,True,,41,,,endemica,,NE,Endémica
+Veniliornis lignarius,,,False,,42,,,comun,,NE,Común
+Anthus correndera,,,False,,43,,,comun,,NE,Común
+Geositta rufipennis,,,False,,44,,,comun,,NE,Común
+Pardirallus sanguinolentus,,,False,,45,,,comun,,NE,Común
+Vanellus chilensis,,,False,,45,,,comun,,NE,Común
+Phrygilus gayi,,,False,,46,,,comun,,NE,Común
+Scytalopus fuscus,,,True,,46,,,endemica,,NE,Endémica
+Mimus thenca,,,True,,48,,,endemica,,NE,Endémica
+Phrygilus patagonicus,,,False,,51,,,comun,,NE,Común
+Pteroptochos tarnii,,,False,,52,,,comun,LC,LC,Común
+Glaucidium nana,,,False,,54,,,comun,,NE,Común
+Spinus barbatus,,,False,,54,,,comun,,NE,Común
+Sylviorthorhynchus desmurii,,,False,,55,,,comun,,NE,Común
+Anairetes parulus,,,False,,56,,,comun,,NE,Común
+Scelorchilus albicollis,,,True,,65,,,endemica,,NE,Endémica
+Sephanoides sephaniodes,,,False,,67,,,comun,,NE,Común
+Pseudasthenes humicola,,,False,,67,,,comun,,NE,Común
+Leptasthenura aegithaloides,,,False,,68,,,comun,,NE,Común
+Scytalopus magellanicus,,,False,,75,,,comun,,NE,Común
+Eugralla paradoxa,,,False,,84,,,comun,,NE,Común
+Elaenia chilensis,,,False,,85,,,comun,,NE,Común
+Pteroptochos megapodius,,,True,,86,,,endemica,,NE,Endémica
+Curaeus curaeus,,,False,,88,,,comun,,NE,Común
+Zonotrichia capensis,,,False,,92,,,comun,,NE,Común
+Scelorchilus rubecula,,,False,,92,,,comun,LC,LC,Común
+Troglodytes aedon,,,False,,102,,,comun,,NE,Común
+Aphrastura spinicauda,,,False,,105,,,comun,,NE,Común
+Turdus falcklandii,,,False,,186,,,comun,,NE,Común

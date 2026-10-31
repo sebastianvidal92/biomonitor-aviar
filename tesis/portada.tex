@@ -1,0 +1,84 @@
+%=======================================================================
+% portada.tex — Portada institucional MIA UC
+%=======================================================================
+\begingroup
+\pagestyle{empty}
+\setstretch{1.0}
+
+%------------------------ Encabezado con logo --------------------------
+\newcommand{\encabezadoMIA}{%
+  \noindent
+  \begin{minipage}[c]{0.28\textwidth}
+    \IfFileExists{figuras/logo-mia.png}
+      {\includegraphics[width=\linewidth]{figuras/logo-mia.png}}
+      {% Sin logo: encabezado solo de texto (agregar figuras/logo-mia.png para reemplazarlo)
+       \parbox[c][2.2cm][c]{0.95\linewidth}{\footnotesize\sffamily\bfseries
+         Magíster en\\Inteligencia Artificial}}
+  \end{minipage}%
+  \hfill
+  \begin{minipage}[c]{0.68\textwidth}
+    \footnotesize\sffamily
+    PONTIFICIA UNIVERSIDAD CATÓLICA DE CHILE\\
+    ESCUELA DE INGENIERÍA
+  \end{minipage}
+}
+
+%------------------------ Pie institucional ----------------------------
+\newcommand{\pieMIA}{%
+  \noindent\rule{\textwidth}{0.4pt}\\[2pt]
+  {\centering\footnotesize
+   Vicuña Mackenna 4860, Edificio San Agustín, 4º piso. Campus San Joaquín. Macul, Santiago\\
+   (56-2) 354 7676 -- (56-2) 354 4443 / \url{https://mia.uc.cl}\par}
+}
+
+%=========================== PÁGINA 1 ==================================
+\encabezadoMIA
+
+\vspace{4.5cm}
+
+\begin{center}
+  {\Huge\bfseries \tituloTesis \par}
+  \vspace{6pt}
+  {\color{pucazul}\rule{0.8\textwidth}{1.2pt}}
+\end{center}
+
+\vfill
+\pieMIA
+\clearpage
+
+%=========================== PÁGINA 2 ==================================
+\noindent
+\begin{minipage}[c]{\textwidth}
+  \footnotesize\sffamily
+  PONTIFICIA UNIVERSIDAD CATÓLICA DE CHILE\\
+  ESCUELA DE INGENIERÍA\\
+  DEPARTAMENTO DE CIENCIA DE LA COMPUTACIÓN
+\end{minipage}
+
+\vspace{3.5cm}
+
+\begin{center}
+  {\LARGE\bfseries \tituloTesis \par}
+
+  \vspace{2.5cm}
+
+  {\Large \autorTesis \par}
+  \vspace{4pt}
+  {\large \fechaTesis \par}
+
+  \vspace{2.5cm}
+
+  \normalsize
+  Informe de Actividad de Graduación para optar al Grado de\\
+  Magíster en Inteligencia Artificial.
+
+  \vspace{2cm}
+
+  \textbf{Profesor Supervisor}\\[2pt]
+  \supervisorTesis
+\end{center}
+
+\vfill
+\pieMIA
+\clearpage
+\endgroup

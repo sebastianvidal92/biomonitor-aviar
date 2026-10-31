@@ -1,0 +1,144 @@
+% Figura: red neuronal convolucional (tres paneles apilados).
+% (a) operación de convolución, (b) arquitectura típica, (c) bloque residual.
+% Unidades: 1 = 1 mm. Ancho total ~150 mm x alto ~125 mm (cabe en \textwidth = 160 mm).
+\begin{tikzpicture}[x=1mm, y=1mm, font=\footnotesize,
+  bloque/.style={draw, rounded corners, align=center, minimum height=8mm,
+                 minimum width=20mm, font=\footnotesize, inner sep=1.5pt},
+  dato/.style={bloque, fill=pucazul!15},
+  capa/.style={bloque, fill=miaamarillo!30},
+  proc/.style={bloque, fill=black!5},
+  salida/.style={bloque, fill=green!12},
+  flecha/.style={-{Latex[length=2mm]}, thick},
+  flechita/.style={-{Latex[length=1.5mm]}, thin, pucgris},
+  panel/.style={anchor=north west, font=\footnotesize\bfseries, inner sep=0pt},
+  etq/.style={font=\footnotesize, align=center, inner sep=1pt},
+  mini/.style={font=\scriptsize, align=center, inner sep=1pt}]
+
+  % Pila de mapas de características: \pila{x}{lado}{n}{desplazamiento}{relleno}{nombre}
+  \def\pila#1#2#3#4#5#6{%
+    \foreach \k in {#3,...,1}{%
+      \pgfmathsetmacro{\kk}{\k-1}%
+      \draw[draw=pucgris, thin, rounded corners=0.4mm, fill=#5]
+        ({#1+\kk*#4},{-#2/2+\kk*#4}) rectangle ++(#2,#2);}%
+    \coordinate (#6w) at (#1,0);
+    \coordinate (#6e) at ({#1+#2+min(#3-1,floor(#2/2/#4))*#4},0);}
+
+  % ================= (a) Operación de convolución =================
+  \begin{scope}[shift={(4,0)}]
+    \node[panel] at (-4,36) {(a) Operación de convolución};
+    % Entrada 6x6
+    \begin{scope}[shift={(4,2)}]
+      \foreach \i in {0,...,5} \foreach \j in {0,...,5}
+        \fill[pucazul!15] (4*\i,4*\j) rectangle ++(4,4);
+      % celdas "de señal" (coordenadas en mm; celda = 4 mm)
+      \foreach \c in {(0,4),(4,4),(8,0),(16,8),(20,12),(20,16),(0,20),(12,20)}
+        \fill[pucazul!40] \c rectangle ++(4,4);
+      % ventana desplazada (punteada) debajo del relleno amarillo
+      \draw[pucgris, thick, dashed] (8,8) rectangle (20,20);
+      \fill[miaamarillo!50] (4,8) rectangle (16,20);
+      \draw[pucgris!50, very thin] (0,0) grid[step=4] (24,24);
+      \draw[pucgris, thick] (4,8) rectangle (16,20);
+      \draw[flechita] (9,25.5) -- (15,25.5);
+      \node[mini, anchor=south] at (12,26.3) {se desliza};
+      \node[etq, anchor=north] at (12,-1) {Entrada\\(espectrograma o imagen)};
+    \end{scope}
+    % Filtro 3x3
+    \draw[flecha] (28,14) -- (36,14) node[midway, above=0.3mm, mini] {$\ast$};
+    \begin{scope}[shift={(36,8.75)}]
+      \foreach \i in {0,1,2} \foreach \j in {0,1,2}
+        \fill[miaamarillo!50] (3.5*\i,3.5*\j) rectangle ++(3.5,3.5);
+      \draw[pucgris, very thin] (0,0) grid[step=3.5] (10.5,10.5);
+      \draw[pucgris, thick] (0,0) rectangle (10.5,10.5);
+      \node[etq, anchor=south] at (5.25,11.5) {Filtro $3{\times}3$};
+      \node[mini, anchor=north] at (5.25,-1) {pesos $u_{l,m}$, sesgo $b$};
+    \end{scope}
+    % Mapa de características 4x4
+    \draw[flecha] (46.5,14) -- (54.5,14);
+    \begin{scope}[shift={(54.5,6)}]
+      \foreach \i in {0,...,3} \foreach \j in {0,...,3}
+        \fill[pucazul!15] (4*\i,4*\j) rectangle ++(4,4);
+      \foreach \c in {(0,0),(12,4),(8,12)}
+        \fill[pucazul!40] \c rectangle ++(4,4);
+      \fill[miaamarillo!50] (4,8) rectangle (8,12);
+      \draw[pucgris!50, very thin] (0,0) grid[step=4] (16,16);
+      \draw[pucgris, thick] (4,8) rectangle (8,12);
+      \node[etq, anchor=north] at (8,-1) {Mapa de\\características};
+    \end{scope}
+    % Fórmula
+    \node[anchor=west, align=left, inner sep=0pt] at (75,14)
+      {$\displaystyle C_{p,q} = \sum_{l,m} I_{p+l,\,q+m}\, u_{l,m} + b$\\[2mm]
+       seguida de ReLU: $\max(0,\,C_{p,q})$};
+  \end{scope}
+
+  % ================= (b) Arquitectura típica =================
+  \begin{scope}[shift={(0,-32)}]
+    \node[panel] at (0,20) {(b) Arquitectura típica de una CNN para clasificación};
+    % Entrada
+    \draw[draw=pucgris, thin, rounded corners=0.4mm, fill=pucazul!15] (0,-6) rectangle (12,6);
+    \node[mini, anchor=south] at (6,9.2) {$H\times W$};
+    \node[etq, anchor=north] at (6,-6.8) {Entrada};
+    % Bloques convolución + pooling (x3)
+    \pila{18.5}{11}{3}{1.2}{miaamarillo!30}{c1}
+    \pila{38.4}{8}{3}{1.2}{black!5}{p1}
+    \pila{55.3}{8}{4}{1.1}{miaamarillo!30}{c2}
+    \pila{73.1}{6}{4}{1.1}{black!5}{p2}
+    \pila{88.9}{6}{5}{1.0}{miaamarillo!30}{c3}
+    \pila{105.4}{4.5}{5}{1.0}{black!5}{p3}
+    \node[etq, anchor=north] at (25.2,-6.8) {Convolución\\+ ReLU};
+    \node[etq, anchor=north] at (60.95,-6.8) {Convolución\\+ ReLU};
+    \node[etq, anchor=north] at (93.9,-6.8) {Convolución\\+ ReLU};
+    \node[mini, anchor=south] at (25.2,9.2) {$C_1$ canales};
+    \node[mini, anchor=south] at (60.95,9.2) {$C_2 > C_1$};
+    \node[mini, anchor=south] at (93.9,9.2) {$C_3 > C_2$};
+    \node[etq, anchor=south] at (43.6,9.2) {Pooling};
+    \node[etq, anchor=south] at (77.75,9.2) {Pooling};
+    \node[etq, anchor=south] at (109.65,9.2) {Pooling};
+    % Pooling global -> vector
+    \draw[draw=pucgris, thin, fill=black!5] (120.4,-6) rectangle (123.4,6);
+    \foreach \y in {-4.5,-3,...,4.5} \draw[pucgris!50, very thin] (120.4,\y) -- (123.4,\y);
+    \node[etq, anchor=north] at (121.9,-6.8) {Pooling\\global};
+    % Capa densa
+    \draw[draw=pucgris, thin, fill=miaamarillo!30] (129.9,-4) rectangle (132.9,4);
+    \foreach \y in {-2.4,-0.8,0.8,2.4} \draw[pucgris!50, very thin] (129.9,\y) -- (132.9,\y);
+    \node[etq, anchor=south] at (131.4,9.2) {Capa densa\\($K$ logits)};
+    % Softmax
+    \draw[draw=pucgris, thin, fill=green!12] (139.4,-4) rectangle (142.4,4);
+    \fill[green!45] (139.4,0.8) rectangle (142.4,2.4);
+    \foreach \y in {-2.4,-0.8,0.8,2.4} \draw[pucgris!50, very thin] (139.4,\y) -- (142.4,\y);
+    \node[etq, anchor=north] at (140.9,-6.8) {Softmax\\($K$ especies)};
+    % Flechas
+    \draw[flecha] (12,0) -- (c1w);
+    \draw[flecha] (c1e) -- (p1w);
+    \draw[flecha] (p1e) -- (c2w);
+    \draw[flecha] (c2e) -- (p2w);
+    \draw[flecha] (p2e) -- (c3w);
+    \draw[flecha] (c3e) -- (p3w);
+    \draw[flecha] (p3e) -- (120.4,0);
+    \draw[flecha] (123.4,0) -- (129.9,0);
+    \draw[flecha] (132.9,0) -- (139.4,0);
+    % Tendencia
+    \draw[flechita] (18.5,-17.5) -- (113.9,-17.5);
+    \node[mini, anchor=north] at (66.2,-18.2)
+      {mapas de características cada vez más pequeños y con más canales};
+  \end{scope}
+
+  % ================= (c) Bloque residual =================
+  \begin{scope}[shift={(0,-76.5)}]
+    \node[panel] at (0,19.5) {(c) Bloque con conexión residual};
+    \node[dato, minimum width=8mm] (rx) at (4,0) {$x$};
+    \node[capa, right=6.5mm of rx, minimum width=22mm] (f1) {Convolución\\+ ReLU};
+    \node[capa, right=6.5mm of f1, minimum width=22mm] (f2) {Convolución};
+    \node[draw, circle, fill=black!5, minimum size=5mm, inner sep=0pt,
+          right=6.5mm of f2] (sum) {$+$};
+    \node[salida, right=6.5mm of sum, minimum width=22mm] (ry) {$y = F(x) + x$};
+    \draw[flecha] (rx) -- (f1);
+    \draw[flecha] (f1) -- (f2);
+    \draw[flecha] (f2) -- (sum);
+    \draw[flecha] (sum) -- (ry);
+    \draw[flecha] (rx.north) -- ++(0,6) -| (sum.north)
+      node[pos=0.25, above, etq] {Conexión residual (atajo de identidad, $x$)};
+    \draw[decorate, decoration={brace, mirror, amplitude=1.5mm}]
+      ([yshift=-1.5mm]f1.south west) -- ([yshift=-1.5mm]f2.south east)
+      node[midway, below=2mm, etq] {$F(x)$: residuo aprendido por las capas};
+  \end{scope}
+\end{tikzpicture}

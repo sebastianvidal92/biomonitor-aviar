@@ -108,10 +108,13 @@ CNN preentrenada en ImageNet (timm) que trata el espectrograma como imagen de 1 
 | **Regularización** | **mixup (α=0.2), label_smoothing=0.1, drop_rate=0.3, drop_path=0.2, SpecAugment ×2** |
 | Dispositivo | Apple M4 Pro (MPS) — ~22 s/época |
 
-> **Motivación de la regularización:** el primer entrenamiento (sin regularizar)
-> sobreajustó fuerte (train_loss → 0.06, val estancado) y dio 0.822 agregado. Se
-> agregó mixup + SpecAugment + label smoothing + dropout, cerrando el gap train/val y
-> subiendo a 0.858 (ver [Registro](#6-registro-de-entrenamiento-época-a-época)).
+> **Motivación de la regularización:** la corrida de control sin regularización
+> explícita (`--tag sinreg`, 26-oct-2026: sin aumentación, mixup 0, label smoothing 0,
+> dropout 0, drop_path 0; log en `reports/training_logs/audio_efficientnet_b0_sinreg.csv`)
+> sobreajusta: train_loss → 0.003, val_loss estancada en 1.5-1.7 (mínimo 1.41 en la
+> época 45) y 0.735 single / 0.789 agregado en test. Con la receta completa el gap
+> train/val se cierra y el agregado sube a 0.858. (Una primera versión anterior, sin
+> mixup ni SpecAugment, había dado 0.756 / 0.822; esos valores quedaron reemplazados.)
 
 ### 4.2 Avanzado — AST (Audio Spectrogram Transformer)
 Fine-tuning de `MIT/ast-finetuned-audioset-10-10-0.4593` (preentrenado en AudioSet).
@@ -139,7 +142,7 @@ reportar ambas.
 
 | Modelo | Test acc (single) | Test F1 (single) | **Test acc (agregado)** | **Test F1 (agregado)** | Costo |
 |---|---|---|---|---|---|
-| EfficientNet-B0 sin regularizar | 0.756 | 0.752 | 0.822 | — | 22 s/época |
+| EfficientNet-B0 sin regularizar (control `--tag sinreg`) | 0.735 | 0.736 | 0.789 | 0.784 | 22 s/época |
 | **EfficientNet-B0 regularizado** | 0.812 | 0.811 | **0.858** | **0.858** | 22 s/época |
 | **AST (transformer)** | 0.832 | 0.828 | **0.868** | **0.862** | ~480 s/época |
 

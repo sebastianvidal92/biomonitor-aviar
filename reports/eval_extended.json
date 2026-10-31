@@ -1,0 +1,36 @@
+{
+  "audio_cnn": {
+    "n": 393,
+    "accuracy": 0.8575063613231552,
+    "f1_macro": 0.8575321660545412,
+    "auc_macro": 0.9909036194723774,
+    "top5": 0.9694656488549618,
+    "classes_auc": 55,
+    "n_params": 4077427,
+    "latency_ms_median": 17.927416498423554,
+    "latency_ms_mean": 27.899156919618726
+  },
+  "audio_ast": {
+    "n": 393,
+    "accuracy": 0.8702290076335878,
+    "f1_macro": 0.8638405886886041,
+    "auc_macro": 0.9925503062492844,
+    "top5": 0.9491094147582697,
+    "classes_auc": 55,
+    "n_params": 86231095,
+    "latency_ms_median": 176.8444999906933,
+    "latency_ms_mean": 285.6025762441052
+  },
+  "image_b3": {
+    "n": 1040,
+    "accuracy": 0.8480769230769231,
+    "f1_macro": 0.8084961027059497,
+    "auc_macro": 0.9903020562635849,
+    "top5": 0.948076923076923,
+    "classes_auc": 53,
+    "n_params": 10777693,
+    "latency_ms_median": 66.45129100070335,
+    "latency_ms_mean": 66.48647752657965,
+    "latency_center_ms_median": 10.704749991418794
+  }
+}

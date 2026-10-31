@@ -1,0 +1,22 @@
+\begin{table}[!htb]
+  \centering\footnotesize
+  \caption{Comparaciones pareadas por especie entre modelos de distribución: diferencia media de AUC-ROC con intervalo \textit{bootstrap} al \SI{95}{\percent}, número de especies en que el primer modelo supera al segundo y valor $p$ del test de Wilcoxon de rangos con signo (bilateral).}
+  \label{tab:tests-sdm}
+  \begin{tabular}{@{}l l r r r r@{}}
+    \toprule
+    Protocolo & Comparación & $n$ & $\Delta$AUC [IC 95\,\%] & Gana & $p$ \\
+    \midrule
+    aleatoria & Random Forest vs. MaxEnt & 54 &  0,021 [0,015; 0,027] & 46/54 & $<$0,001 \\
+    aleatoria & Gradient boosting vs. MaxEnt & 54 &  0,019 [0,012; 0,026] & 44/54 & $<$0,001 \\
+    aleatoria & Red neuronal vs. MaxEnt & 54 & -0,007 [-0,011; -0,003] & 15/54 & 0,001 \\
+    aleatoria & RF + \textit{embedding} satelital vs. RF & 54 & -0,006 [-0,009; -0,004] & 10/54 & $<$0,001 \\
+    espacial & Random Forest vs. MaxEnt & 54 & -0,004 [-0,012; 0,004] & 17/54 & 0,060 \\
+    espacial & Gradient boosting vs. MaxEnt & 54 & -0,013 [-0,022; -0,004] & 16/54 & 0,003 \\
+    espacial & Red neuronal vs. MaxEnt & 54 & -0,006 [-0,012; 0,000] & 21/54 & 0,044 \\
+    temporal 2017-2025 & RF vs. MaxEnt & 53 &  0,011 [0,005; 0,017] & 38/53 & $<$0,001 \\
+    temporal 2017-2025 & RF + satélite fijo vs. RF & 53 & -0,003 [-0,007; 0,000] & 21/53 & 0,069 \\
+    temporal 2017-2025 & RF + satélite pareado vs. RF & 53 & -0,001 [-0,005; 0,003] & 28/53 & 0,891 \\
+    temporal 2017-2025 & RF + satélite pareado vs. fijo & 53 &  0,002 [0,001; 0,004] & 32/53 & 0,010 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

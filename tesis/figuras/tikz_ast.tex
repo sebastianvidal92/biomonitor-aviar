@@ -1,0 +1,132 @@
+% Figura: Audio Spectrogram Transformer (AST). Incluir con \input dentro de un
+% entorno figure. Requiere las bibliotecas TikZ y colores del preámbulo.
+\begin{tikzpicture}[
+  font=\footnotesize,
+  bloque/.style={draw, rounded corners, align=center, minimum height=9mm,
+                 inner sep=2pt, font=\footnotesize},
+  dato/.style={bloque, fill=pucazul!15},
+  proc/.style={bloque, fill=black!5},
+  modelo/.style={bloque, fill=miaamarillo!30},
+  salida/.style={bloque, fill=green!12},
+  suma/.style={draw, circle, fill=white, inner sep=0pt, minimum size=4mm,
+               font=\small},
+  token/.style={draw, fill=pucazul!15, minimum width=6mm, minimum height=6mm,
+                inner sep=1pt, font=\scriptsize},
+  nota/.style={font=\scriptsize, align=center, inner sep=1pt},
+  flecha/.style={-{Latex[length=2mm]}, thick},
+  residual/.style={-{Latex[length=1.6mm]}, thin, rounded corners=1.2mm},
+  guia/.style={black!45, thin}]
+
+  % ---------------- Fila 1: espectrograma -> parches -> proyección -> tokens
+  % Espectrograma log-mel (rectángulo con grilla y trazos que imitan un canto)
+  \node[draw, fill=pucazul!15, minimum width=26mm, minimum height=14mm,
+        inner sep=0pt] (spec) at (13mm,0) {};
+  \begin{scope}
+    \clip (spec.south west) rectangle (spec.north east);
+    \draw[step=2mm, pucazul!55, very thin] (spec.south west) grid (spec.north east);
+    \draw[pucazul!85!black, line width=1.1mm, line cap=round]
+      (3mm,-3mm) -- (5mm,2mm)  (6mm,4mm) -- (9mm,0mm)  (11mm,-4mm) -- (12mm,-1mm)
+      (14mm,2mm) -- (17mm,4mm) (19mm,-2mm) -- (21mm,3mm) (22mm,-4mm) -- (24mm,-1mm);
+  \end{scope}
+  \node[nota, anchor=south] at (spec.north) {Espectrograma log-mel};
+  \node[nota, anchor=north] at (spec.south) {1024 cuadros (\SI{10}{s})};
+  \node[nota, anchor=south, rotate=90] at (spec.west) {128 bandas mel};
+
+  % Parches 16x16 con paso 10 (solapados): cuatro cuadrados semitransparentes,
+  % dibujados como ampliación de una pequeña región del espectrograma
+  \coordinate (pSW) at (35mm,-6.5mm);
+  \foreach \dx/\dy/\col in {0/0/pucazul, 5/0/miaamarillo!80!black,
+                            0/5/green!60!black, 5/5/red!70!black}
+    \draw[draw=\col, fill=\col, fill opacity=0.28, thick]
+      ([shift={(\dx mm,\dy mm)}]pSW) rectangle ++(8mm,8mm);
+  \node[inner sep=0pt, minimum width=13mm, minimum height=13mm]
+       (patch) at ([shift={(6.5mm,6.5mm)}]pSW) {};
+  \draw[|-|, thin] ([yshift=1.3mm]pSW |- patch.north) -- ++(5mm,0);
+  \node[nota, anchor=south] at ([shift={(2.5mm,1.6mm)}]pSW |- patch.north) {paso 10};
+  \node[nota, anchor=north, text width=19mm] at ([yshift=-0.8mm]patch.south)
+       {Parches $16{\times}16$\\(solapados)};
+  % Región ampliada: recuadro punteado sobre el espectrograma + líneas guía
+  \coordinate (zNE) at (23mm,2.25mm);
+  \coordinate (zSE) at (23mm,-2.25mm);
+  \draw[densely dotted, black!75, semithick] (18.5mm,-2.25mm) rectangle (zNE);
+  \draw[guia] (zNE) -- (patch.north west);
+  \draw[guia] (zSE) -- (patch.south west);
+
+  % Proyección lineal + embedding posicional
+  \node[modelo, right=5mm of patch, text width=29mm] (proj)
+       {Proyección lineal ($768$-d)\\+ embedding posicional};
+
+  % Secuencia de tokens
+  \node[token, fill=pucazul!45, right=5mm of proj] (cls) {[CLS]};
+  \node[token, right=0mm of cls] (z1) {$z_1$};
+  \node[token, right=0mm of z1]  (z2) {$z_2$};
+  \node[token, right=0mm of z2]  (z3) {$z_3$};
+  \node[token, draw=none, fill=none, right=0mm of z3] (zd) {$\cdots$};
+  \node[token, right=0mm of zd]  (zN) {$z_N$};
+  \node[nota, anchor=south] at ($(cls.north)!0.5!(zN.north)$) {Secuencia de tokens};
+  \node[nota, anchor=north] at ($(cls.south)!0.5!(zN.south)$) {$N$ parches + [CLS]};
+
+  \draw[flecha] (spec) -- (patch);
+  \draw[flecha] (patch) -- (proj);
+  \draw[flecha] (proj) -- (cls);
+
+  % ---------------- Fila 2: bloque codificador Transformer (x12) y salida
+  % (in) es el punto de bifurcación (entrada del bloque y arranque del residual);
+  % (inL) solo extiende el marco punteado 1,5 mm más a la izquierda de (in).
+  \coordinate (in)  at (8mm,-36.5mm);
+  \coordinate (inL) at ([xshift=-1.5mm]in);
+  \node[proc, anchor=west] (ln1) at ([xshift=3.5mm]in) {LayerNorm};
+  \node[modelo, right=3.5mm of ln1, text width=19.5mm] (mha)
+       {Atención\\multicabeza\\(12 cabezas)};
+  \node[suma, right=3.5mm of mha] (add1) {$+$};
+  \node[proc, right=3.5mm of add1] (ln2) {LayerNorm};
+  \node[modelo, right=3.5mm of ln2, minimum width=10mm] (mlp) {MLP};
+  \node[suma, right=3.5mm of mlp] (add2) {$+$};
+
+  \draw[flecha] (in) -- (ln1);
+  \draw[flecha] (ln1) -- (mha);
+  \draw[flecha] (mha) -- (add1);
+  \draw[flecha] (add1) -- (ln2);
+  \draw[flecha] (ln2) -- (mlp);
+  \draw[flecha] (mlp) -- (add2);
+  % conexiones residuales
+  \coordinate (mid) at ($(add1.east)!0.5!(ln2.west)$);
+  \draw[residual] (in) -- ([yshift=9.5mm]in) -| (add1.north);
+  \draw[residual] (mid) -- ([yshift=9.5mm]mid) -| (add2.north);
+  \fill (in) circle (0.5mm);   % punto de bifurcación
+  \fill (mid) circle (0.5mm);
+
+  \begin{scope}[on background layer]
+    \node[draw, dashed, rounded corners, fill=miaamarillo!8, inner sep=2mm,
+          fit={(inL) (ln1) (add2) ([yshift=9.5mm]in)}] (enc) {};
+  \end{scope}
+  \node[anchor=south west, font=\footnotesize\bfseries, inner sep=1pt]
+       at ([xshift=1mm]enc.north west) {Bloque codificador Transformer};
+  \node[anchor=south east, font=\footnotesize\bfseries, inner sep=1pt]
+       at ([xshift=-1mm]enc.north east) {$\times 12$};
+
+  % Salida: token [CLS] -> capa densa -> softmax
+  \node[token, fill=pucazul!45, right=4mm of enc] (clsout) {[CLS]};
+  \node[modelo, right=3.5mm of clsout] (dense) {Capa\\densa};
+  \node[salida, right=3.5mm of dense] (out) {softmax\\(55 especies)};
+  \draw[flecha] (add2) -- (clsout);
+  \draw[flecha] (clsout) -- (dense);
+  \draw[flecha] (dense) -- (out);
+
+  % Tokens -> entrada del codificador (vuelta de fila). Sin punta: la única
+  % punta de flecha de esta entrada es la de (in) -> LayerNorm.
+  \draw[thick, rounded corners=2mm]
+    (zN.east) -- ++(2.5mm,0) -- ++(0,-17.5mm) -| ([xshift=-6mm]in) -- (in);
+
+  % ---------------- Fila 3: fórmula de atención, nota ViT y parámetros
+  \node[proc, anchor=north, inner sep=4pt] (att)
+       at ([yshift=-5mm]mha.south |- enc.south)
+       {$\text{Atención}(\mathbf{Q},\mathbf{K},\mathbf{V})=\mathrm{softmax}\!\left(\dfrac{\mathbf{Q}\mathbf{K}^{\mathrm{T}}}{\sqrt{D_k}}\right)\mathbf{V}$};
+  \draw[dashed] (mha.south) -- (att.north);
+  \node[nota, font=\footnotesize\itshape, text width=38mm, anchor=north]
+       at (add2.south |- att.north) {Mismo diseño que ViT sobre parches de una imagen};
+  \coordinate (pmid) at ($(dense.south)!0.5!(out.south)$);
+  \node[nota, font=\footnotesize, text width=30mm, anchor=north]
+       at (pmid |- att.north)
+       {\textbf{86,2 M} parámetros\\(preentrenado\\en AudioSet)};
+\end{tikzpicture}

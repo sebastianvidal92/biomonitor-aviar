@@ -51,10 +51,11 @@ def _load_window(path: str, n_samples: int, random_crop: bool) -> np.ndarray:
 
 
 class BirdSpectrogramDataset(Dataset):
-    def __init__(self, manifest, label_map: dict[str, int], train: bool = False):
+    def __init__(self, manifest, label_map: dict[str, int], train: bool = False, augment: bool = True):
         self.df = manifest.reset_index(drop=True)
         self.label_map = label_map
         self.train = train
+        self.augment = train and augment  # augment=False: sin ganancia/ruido/SpecAugment (corrida sin regularizar)
         self.melspec = torchaudio.transforms.MelSpectrogram(
             sample_rate=SR, n_fft=N_FFT, hop_length=HOP, n_mels=N_MELS
         )
@@ -71,7 +72,7 @@ class BirdSpectrogramDataset(Dataset):
         y = _load_window(path, CLIP_SAMPLES, random_crop=self.train)
         wav = torch.from_numpy(y)
 
-        if self.train:  # augmentation a nivel de audio
+        if self.augment:  # augmentation a nivel de audio
             wav = wav * (10 ** (random.uniform(-6, 6) / 20))      # ganancia ±6 dB
             if random.random() < 0.5:
                 wav = wav + 0.005 * torch.randn_like(wav)          # ruido gaussiano
@@ -79,7 +80,7 @@ class BirdSpectrogramDataset(Dataset):
         mel = self.to_db(self.melspec(wav))                        # [n_mels, frames]
         mel = (mel - mel.mean()) / (mel.std() + 1e-6)              # normalización
 
-        if self.train:                                             # SpecAugment (2 máscaras)
+        if self.augment:                                           # SpecAugment (2 máscaras)
             mel = mel.unsqueeze(0)
             for _ in range(2):
                 mel = self.time_mask(self.freq_mask(mel))
@@ -89,12 +90,12 @@ class BirdSpectrogramDataset(Dataset):
         return mel.unsqueeze(0), label                             # [1, n_mels, frames], int
 
 
-def datasets_from_manifest(manifest, species: list[str]):
+def datasets_from_manifest(manifest, species: list[str], augment: bool = True):
     """Devuelve (train_ds, val_ds, test_ds, label_map) a partir del manifiesto cacheado."""
     label_map = build_label_map(species)
     parts = {s: manifest[manifest["split"] == s] for s in ("train", "val", "test")}
     return (
-        BirdSpectrogramDataset(parts["train"], label_map, train=True),
+        BirdSpectrogramDataset(parts["train"], label_map, train=True, augment=augment),
         BirdSpectrogramDataset(parts["val"], label_map, train=False),
         BirdSpectrogramDataset(parts["test"], label_map, train=False),
         label_map,

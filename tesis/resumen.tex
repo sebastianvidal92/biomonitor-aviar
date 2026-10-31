@@ -1,0 +1,39 @@
+%=======================================================================
+% resumen.tex
+%=======================================================================
+Chile alberga 528 especies de aves nativas, 12 de ellas endémicas, y 71 de
+las 147 clasificadas por el Reglamento de Clasificación de Especies están
+amenazadas \citep{mma2026rce}. Su monitoreo depende de especialistas y de
+trabajo de campo costoso, mientras la ciencia ciudadana y los satélites
+acumulan datos que apenas se aprovechan. Este trabajo desarrolla y evalúa un
+sistema de aprendizaje profundo que identifica especies de aves chilenas a
+partir de audio y/o imagen mediante fusión multimodal, y que modela su
+distribución espaciotemporal a partir de avistamientos, clima e índices de
+vegetación.
+
+Se integraron en un repositorio reproducible grabaciones de Xeno-canto
+(\num{2508}), fotografías de iNaturalist vía GBIF (\num{7060}),
+\num{100270} avistamientos de eBird e iNaturalist y covariables ambientales
+de Google Earth Engine, para 55 especies de Chile continental con foco en
+las amenazadas y endémicas. En audio se ajustan una CNN (EfficientNet-B0) y
+el \textit{Audio Spectrogram Transformer} sobre espectrogramas log-mel; en
+imagen, EfficientNet-B3 con aumentación en tiempo de prueba. Ambas ramas se
+combinan por \textit{late fusion} y se contrastan con clasificadores
+unimodales, con \textit{frozen embeddings} y con un modelo de IA generativa
+multimodal. En distribución se comparan MaxEnt, Random Forest, gradient
+boosting y una red neuronal multiespecie, con partición aleatoria y
+validación espacial por bloques.
+
+La fusión identifica 53 especies con 0,945 de \textit{accuracy} (intervalo
+de confianza al \SI{95}{\percent} de 0,924 a 0,959), por sobre el audio solo
+(0,865), la imagen sola (0,816), el modelo generativo (0,817) y la meta del
+\SI{85}{\percent}. Random Forest supera a MaxEnt en AUC-ROC con partición
+aleatoria (0,884 frente a 0,863, $p < 0{,}001$), pero bajo validación
+espacial todos los modelos convergen a 0,80--0,82; la red neuronal no supera
+a MaxEnt y los \textit{embeddings} satelitales no aportan.
+
+El sistema cumple sus objetivos y deja tres aportes: la evidencia de que la
+fusión audio-imagen con datos no emparejados de ciencia ciudadana supera a
+cada modalidad; un resultado negativo bien fundamentado sobre el aprendizaje
+profundo en modelos de distribución tabulares; y un repositorio reproducible
+con un prototipo integrado, extensible a otras especies y regiones.

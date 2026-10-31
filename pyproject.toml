@@ -19,6 +19,7 @@ dependencies = [
     "cdsapi>=0.7",        # ERA5 vía Copernicus Climate Data Store
     "earthengine-api>=1.0",  # Sentinel-2 / NDVI vía Google Earth Engine
     "openpyxl>=3.1.5",
+    "anthropic>=1.13.0",
 ]
 
 [project.optional-dependencies]

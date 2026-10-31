@@ -1,0 +1,89 @@
+%=======================================================================
+% anexoB.tex — Hiperparámetros y detalles de entrenamiento
+%=======================================================================
+Las tablas siguientes recogen la configuración exacta de cada modelo, tal
+como quedó en el archivo de configuración del repositorio y en los
+\textit{scripts} de entrenamiento. Todos los entrenamientos se ejecutaron en
+un Mac con procesador Apple M4 Pro (GPU mediante Metal/MPS), con semilla 42
+y selección del mejor \textit{checkpoint} por F1 macro en validación.
+
+\begin{table}[H]
+  \centering\small
+  \caption{Clasificadores de audio.}
+  \label{tab:hp-audio}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} X X@{}}
+    \toprule
+    & EfficientNet-B0 (CNN) & AST \\
+    \midrule
+    Preentrenamiento & ImageNet (timm: \texttt{efficientnet\_b0.} \texttt{ra\_in1k}) & AudioSet (\texttt{MIT/ast-finetuned-} \texttt{audioset-10-10-0.4593}) \\
+    Entrada & ventana de \SI{5}{\second} a \SI{32}{\kilo\hertz}; log-mel de 128 bandas, $N_\mathrm{FFT} = 1024$, salto de 320 muestras (100 cuadros/s), normalizada por ventana & ventana de \SI{10}{\second} remuestreada a \SI{16}{\kilo\hertz}; banco de filtros de 128 bandas $\times$ 1024 cuadros con la normalización de AudioSet \\
+    Ventana en entrenamiento / evaluación & aleatoria / central y agregado de hasta 12 & aleatoria / central y agregado de hasta 8 \\
+    Aumentación & ganancia $\pm$\SI{6}{\decibel}, ruido gaussiano (p = 0,5), SpecAugment ($2\times$ máscaras de 24 bandas y 48 cuadros), \textit{mixup} $\alpha = 0{,}2$ & ninguna \\
+    Pérdida & entropía cruzada con pesos $1/n_k$ normalizados y suavizado 0,1 & ídem \\
+    Regularización & \textit{dropout} 0,3; profundidad estocástica 0,2; \textit{weight decay} 0,01 & \textit{weight decay} 0,01 \\
+    Optimizador & AdamW, lr $10^{-3}$, coseno & AdamW, lr $2 \times 10^{-5}$, coseno \\
+    Lote / épocas & 32 / 100 (mejor: 67) & 8 / 20 (mejor: 11) \\
+    Parámetros & 4,1 M & 86,2 M \\
+    Tiempo por época & \SI{22}{\second} & $\approx$ \SI{480}{\second} \\
+    Corrida de control sin regularizar & misma receta sin aumentación, \textit{mixup} 0, suavizado 0, \textit{dropout} 0 y profundidad estocástica 0; 100 épocas (mejor: 45) & -- \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Clasificador de imagen y cabezas de fusión.}
+  \label{tab:hp-imagen}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} X@{}}
+    \toprule
+    Elemento & Configuración \\
+    \midrule
+    \textit{Backbone} & EfficientNet-B3 preentrenada en ImageNet (\texttt{efficientnet\_b3.ra2\_in1k}); variante NoisyStudent (\texttt{tf\_efficientnet\_b3.ns\_jft\_in1k}) \\
+    Entrada & \SI{384}{px}; entrenamiento: \texttt{RandomResizedCrop} (escala 0,7--1,0), volteo horizontal, variación de color 0,2; evaluación: redimensión a \SI{441}{px} y recorte central; TTA de diez recortes \\
+    Pérdida y regularización & entropía cruzada con suavizado 0,1; \textit{mixup} $\alpha = 0{,}2$; \textit{dropout} 0,3; profundidad estocástica 0,2; \textit{weight decay} 0,01 \\
+    Optimizador & AdamW, lr $5 \times 10^{-4}$, coseno; lote 32; 50 épocas (mejor: 38) \\
+    Parámetros / tiempo & 10,8 M; 250--\SI{500}{\second} por época \\
+    ViT-S/16 (comparación) & \texttt{vit\_small\_patch16\_224.} \texttt{augreg\_in21k\_ft\_in1k}; entrada de \SI{224}{px} (redimensión a \SI{257}{px} y recorte); misma pérdida, regularización y aumentación; AdamW, lr $10^{-4}$, coseno; mismo lote; 30 épocas (mejor: 30); 21,7 M; $\approx$ \SI{100}{\second} por época \\
+    \midrule
+    \textit{Late fusion} (sistema) & $\alpha = 0{,}5$ sobre los \textit{softmax}; imagen proyectada de 53 a 55 clases \\
+    Cabezas de fusión (comparación) & \textit{frozen embeddings} de 1\,280 (audio, media de 12 ventanas) y 1\,536 (imagen) dimensiones, estandarizados; \textit{late fusion}: una capa lineal por modalidad; \textit{early fusion}: concatenación $\to$ 256 $\to$ clases; \textit{intermediate fusion}: proyección de cada modalidad a 256 $\to$ concatenación $\to$ 256 $\to$ clases; \textit{dropout} 0,3; AdamW lr $10^{-3}$, lote 64, 40 épocas; 150 pares de entrenamiento y 30 de prueba por especie \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Modelos de distribución de especies.}
+  \label{tab:hp-sdm}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} X@{}}
+    \toprule
+    Elemento & Configuración \\
+    \midrule
+    Datos por especie & presencias (hasta 500) frente a \num{1500} puntos de fondo de grupo objetivo muestreados con semilla 42; especies con al menos 20 presencias (54) \\
+    Covariables & NDVI, temperatura media anual, precipitación anual, elevación, seno y coseno del mes; estandarizadas para MaxEnt y la red \\
+    Partición & estratificada 70/30 (comparación principal); bloques espaciales de \SI{200}{\kilo\metre} en 5 \textit{folds} (validación espacial) \\
+    MaxEnt & regresión logística con características de grado 2, clases balanceadas, penalización L2 (C = 1), \num{1000} iteraciones \\
+    Random Forest & 300 árboles, clases balanceadas, resto por defecto de \texttt{scikit-learn} \\
+    Gradient boosting & \texttt{HistGradientBoosting}, 300 iteraciones, tasa 0,05, clases balanceadas \\
+    Red neuronal conjunta & \textit{embedding} de especie de 8 dimensiones; capas de 64 y 64 unidades con ReLU y \textit{dropout} 0,3; entropía cruzada binaria con peso positivo; AdamW lr $10^{-3}$, \textit{weight decay} 0,01; lote 512; 40 épocas \\
+    Experimentos satelitales & parches de cobertura de suelo (ESA WorldCover, \SI{3}{\kilo\metre}) con CNN pequeña; \textit{embedding} satelital anual de 64 dimensiones (Google AlphaEarth) fijo (2023) y pareado al año de observación (2017--2025) \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\begin{table}[H]
+  \centering\small
+  \caption{\textit{Baselines} de referencia de la identificación de especies.}
+  \label{tab:hp-baselines}
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.1cm} X@{}}
+    \toprule
+    Elemento & Configuración \\
+    \midrule
+    \textit{Frozen embeddings} & EfficientNet-B0 de ImageNet (\texttt{efficientnet\_b0}, un canal de entrada, \textit{pooling} global, 1\,280 dimensiones; promedio de hasta 8 ventanas de \SI{5}{\second}); AST de AudioSet (salida \textit{pooler}, 768 dimensiones; promedio de hasta 4 ventanas de \SI{10}{\second}); EfficientNet-B3 de ImageNet (1\,536 dimensiones, recorte central de \SI{384}{px}). Ningún peso se ajusta. \\
+    Clasificador lineal & estandarización con la media y la varianza del conjunto de entrenamiento; regresión logística multinomial con clases balanceadas y hasta 3\,000 iteraciones; $C$ elegido por F1 macro en validación entre $\{0{,}01; 0{,}1; 1; 10\}$ (resultó 1 para la CNN de audio, 0,1 para el AST y 0,01 para la imagen) \\
+    \midrule
+    IA generativa & \texttt{claude-opus-5-5} vía API; instrucción de sistema con la lista cerrada de 53 especies (nombre científico y común) y la fotografía de prueba a tamaño original; esfuerzo de razonamiento \texttt{low}; temperatura por defecto (1,0); hasta 4\,096 tokens de salida; respuesta en JSON con esquema que restringe la especie a la lista y pide una confianza en $[0, 1]$ \\
+    \textit{Zero-shot} / \textit{few-shot} & \textit{zero-shot}: solo la fotografía de prueba (4 respuestas inválidas de 1\,040, contadas como errores); \textit{few-shot}: una fotografía de referencia por especie (lado mayor reducido a \SI{320}{px}) en un primer turno compartido y almacenado en la caché de \textit{prompts}, seguido de la fotografía de prueba. Costo: US\$2,19 y US\$4,27 por las 1\,040 fotografías; latencia mediana 2,4 y \SI{2,7}{\second} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

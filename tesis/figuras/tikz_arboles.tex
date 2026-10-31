@@ -1,0 +1,173 @@
+% Ensambles de árboles para el modelo de distribución: (a) Random Forest,
+% (b) gradient boosting y (c) MaxEnt como regresión logística penalizada.
+% Incluir con \input dentro de un entorno figure (ancho ~157 mm).
+% Los tres árboles de (a) son esquemáticos: profundidad 2, reglas y
+% probabilidades de hoja ilustrativas (no provienen de un modelo ajustado).
+\begin{tikzpicture}[x=1mm, y=1mm, font=\footnotesize,
+  caja/.style={draw, rounded corners=1.5pt, align=center, inner sep=2pt, line width=0.4pt},
+  datos/.style={caja, fill=pucazul!15},
+  proc/.style={caja, fill=black!5},
+  modelo/.style={caja, fill=miaamarillo!30},
+  salida/.style={caja, fill=green!12},
+  regla/.style={modelo, font=\scriptsize, inner xsep=1.2pt, inner ysep=1.5pt, minimum height=4.5mm},
+  hoja/.style={salida, circle, font=\scriptsize, inner sep=0.6pt, minimum size=5mm},
+  flecha/.style={-{Latex[length=2mm]}, thick},
+  flechafina/.style={-{Latex[length=1.5mm]}, semithick},
+  rama/.style={semithick, black!60},
+  sino/.style={font=\scriptsize, text=black!75, inner sep=0.3pt},
+  etq/.style={font=\scriptsize, inner sep=0.8pt},
+  titulo/.style={font=\footnotesize\bfseries, anchor=west, inner sep=0},
+  pres/.style={circle, fill=pucazul, draw=pucazul!50!black, inner sep=0, minimum size=1.7mm},
+  fondo/.style={circle, fill=white, draw=black!60, semithick, inner sep=0, minimum size=1.7mm},
+  pics/minitree/.style={code={
+      \node[modelo, minimum size=3mm, inner sep=0, rounded corners=1pt] (-r) at (0,0) {};
+      \node[salida, circle, minimum size=2.4mm, inner sep=0] (-a) at (-3,-4.5) {};
+      \node[salida, circle, minimum size=2.4mm, inner sep=0] (-b) at (3,-4.5) {};
+      \draw[rama] (-r) -- (-a); \draw[rama] (-r) -- (-b);}}]
+
+  % ======================= (a) Random Forest =======================
+  \node[titulo] at (0,67) {(a) Random Forest: \mdseries bagging de árboles con selección aleatoria de covariables};
+  \node[datos] (datos) at (62,60)
+    {Conjunto de entrenamiento: presencias ($y{=}1$) y fondo de grupo objetivo ($y{=}0$)\\
+     con 6 covariables: NDVI, temperatura, precipitación, elevación, sen/cos del mes};
+
+  % muestras bootstrap
+  \node[proc, font=\scriptsize] (b1) at (20,46.5)  {Muestra\\bootstrap 1};
+  \node[proc, font=\scriptsize] (b2) at (65,46.5)  {Muestra\\bootstrap 2};
+  \node[proc, font=\scriptsize] (b3) at (107,46.5) {Muestra\\bootstrap 3};
+  \node[font=\footnotesize] at (128,46.5) {$\cdots$};
+  \coordinate (bus) at ($(datos.south)+(0,-1.8)$);
+  \draw[thick] (datos.south) -- (bus);
+  \draw[thick] (bus -| b1.north) -- (bus -| b3.north);
+  \draw[flecha] (bus -| b1.north) -- (b1.north);
+  \draw[flecha] (bus -| b2.north) -- (b2.north);
+  \draw[flecha] (bus -| b3.north) -- (b3.north);
+
+  % ---- árbol 1 ----
+  \node[regla] (r1)  at (20,36.5) {NDVI $<$ 0,4};
+  \node[regla] (c11) at (9,28)  {elev. $>$ \SI{1200}{m}};
+  \node[regla] (c12) at (31,28) {temp. $>$ \SI{12}{\celsius}};
+  \node[hoja] (h11) at (3.5,20.5)  {0,10};
+  \node[hoja] (h12) at (14.5,20.5) {0,35};
+  \node[hoja] (h13) at (25.5,20.5) {0,80};
+  \node[hoja] (h14) at (36.5,20.5) {0,45};
+  \draw[rama] (r1) -- (c11) node[sino, pos=0.7, above left=-0.5pt] {sí};
+  \draw[rama] (r1) -- (c12) node[sino, pos=0.7, above right=-0.5pt] {no};
+  \draw[rama] (c11) -- (h11); \draw[rama] (c11) -- (h12);
+  \draw[rama] (c12) -- (h13); \draw[rama] (c12) -- (h14);
+  \node[font=\scriptsize] (t1) at (20,15.5) {$T_1(\mathbf{c})$};
+
+  % ---- árbol 2 ---- (los árboles 2 y 3 van 3 mm a la derecha para que las
+  % reglas de árboles vecinos no se toquen)
+  \begin{scope}[xshift=3mm]
+  \node[regla] (r2)  at (62,36.5) {temp. $>$ \SI{12}{\celsius}};
+  \node[regla] (c21) at (51,28) {precip. $<$ \SI{300}{mm}};
+  \node[regla] (c22) at (73,28) {sen(mes) $>$ 0};
+  \node[hoja] (h21) at (45.5,20.5) {0,20};
+  \node[hoja] (h22) at (56.5,20.5) {0,65};
+  \node[hoja] (h23) at (67.5,20.5) {0,15};
+  \node[hoja] (h24) at (78.5,20.5) {0,50};
+  \draw[rama] (r2) -- (c21) node[sino, pos=0.7, above left=-0.5pt] {sí};
+  \draw[rama] (r2) -- (c22) node[sino, pos=0.7, above right=-0.5pt] {no};
+  \draw[rama] (c21) -- (h21); \draw[rama] (c21) -- (h22);
+  \draw[rama] (c22) -- (h23); \draw[rama] (c22) -- (h24);
+  \node[font=\scriptsize] (t2) at (62,15.5) {$T_2(\mathbf{c})$};
+  \end{scope}
+
+  % ---- árbol 3 ----
+  \begin{scope}[xshift=3mm]
+  \node[regla] (r3)  at (104,36.5) {elev. $>$ \SI{1200}{m}};
+  \node[regla] (c31) at (93,28)  {NDVI $<$ 0,4};
+  \node[regla] (c32) at (115,28) {precip. $>$ \SI{800}{mm}};
+  \node[hoja] (h31) at (87.5,20.5)  {0,05};
+  \node[hoja] (h32) at (98.5,20.5)  {0,40};
+  \node[hoja] (h33) at (109.5,20.5) {0,70};
+  \node[hoja] (h34) at (120.5,20.5) {0,30};
+  \draw[rama] (r3) -- (c31) node[sino, pos=0.7, above left=-0.5pt] {sí};
+  \draw[rama] (r3) -- (c32) node[sino, pos=0.7, above right=-0.5pt] {no};
+  \draw[rama] (c31) -- (h31); \draw[rama] (c31) -- (h32);
+  \draw[rama] (c32) -- (h33); \draw[rama] (c32) -- (h34);
+  \node[font=\scriptsize] (t3) at (104,15.5) {$T_3(\mathbf{c})$};
+  \end{scope}
+
+  \draw[flecha] (b1) -- (r1); \draw[flecha] (b2) -- (r2); \draw[flecha] (b3) -- (r3);
+
+
+  % promedio
+  \node[salida] (prom) at (65,5.5)
+    {Promedio de los $B$ árboles: \; $p(\mathbf{c}) = \frac{1}{B}\sum_{b=1}^{B} T_b(\mathbf{c})$};
+  \draw[flecha] (t1.south) -- ++(0,-2.5) -| ([xshift=-14mm]prom.north);
+  \draw[flecha] (t2.south) -- (prom.north);
+  \draw[flecha] (t3.south) -- ++(0,-2.5) -| ([xshift=14mm]prom.north);
+
+  % separadores
+  \draw[black!30, dashed] (0,-1) -- (157,-1);
+  \draw[black!30, dashed] (107.5,-3) -- (107.5,-56);
+
+  % ======================= (b) Gradient boosting =======================
+  \node[titulo] at (0,-5) {(b) Gradient boosting: \mdseries árboles secuenciales sobre el residuo};
+  \node[proc] (F0) at (8,-40) {$F_0(\mathbf{c})$\\[-2pt]{\scriptsize constante}};
+  \node[proc] (F1) at (30,-40) {$F_1(\mathbf{c})$};
+  \node[proc] (F2) at (52,-40) {$F_2(\mathbf{c})$};
+  \node[proc] (F3) at (74,-40) {$F_3(\mathbf{c})$};
+  \node[inner sep=0.5pt] (Fd) at (86,-40) {$\cdots$};
+  \node[salida] (FM) at (97,-40) {$F_J(\mathbf{c})$};
+  \node[font=\scriptsize, anchor=north, inner sep=1pt] at ([xshift=-1mm]FM.south) {$p(\mathbf{c})=\sigma\big(F_J(\mathbf{c})\big)$};
+  \draw[flecha] (F0) -- (F1); \draw[flecha] (F1) -- (F2); \draw[flecha] (F2) -- (F3);
+  \draw[flecha] (F3) -- (Fd); \draw[flecha] (Fd) -- (FM);
+
+  \pic (g1) at (19,-23) {minitree};
+  \pic (g2) at (41,-23) {minitree};
+  \pic (g3) at (63,-23) {minitree};
+  \node[font=\scriptsize] at (19,-17.5) {$T_1(\mathbf{c})$};
+  \node[font=\scriptsize] at (41,-17.5) {$T_2(\mathbf{c})$};
+  \node[font=\scriptsize] at (63,-17.5) {$T_3(\mathbf{c})$};
+
+  \draw[flechafina, dashed] (F0.north) -- (g1-a.south west)
+        node[etq, pos=0.62, left] {$r_1$};
+  \draw[flechafina] (g1-b.south east) -- (F1.north)
+        node[etq, pos=0.3, right] {$\nu T_1$};
+  \draw[flechafina, dashed] (F1.north) -- (g2-a.south west)
+        node[etq, pos=0.62, left] {$r_2$};
+  \draw[flechafina] (g2-b.south east) -- (F2.north)
+        node[etq, pos=0.3, right] {$\nu T_2$};
+  \draw[flechafina, dashed] (F2.north) -- (g3-a.south west)
+        node[etq, pos=0.62, left] {$r_3$};
+  \draw[flechafina] (g3-b.south east) -- (F3.north)
+        node[etq, pos=0.3, right] {$\nu T_3$};
+
+  \draw[flechafina, dashed] (2,-48.5) -- (7,-48.5);
+  \node[anchor=west, font=\scriptsize] at (7.5,-48.5)
+    {pseudorresiduo $r_m = y - \sigma\big(F_{m-1}(\mathbf{c})\big)$ que aprende el árbol $T_m$};
+  \draw[flechafina] (2,-52) -- (7,-52);
+  \node[anchor=west, font=\scriptsize] at (7.5,-52)
+    {$F_m(\mathbf{c}) = F_{m-1}(\mathbf{c}) + \nu\,T_m(\mathbf{c})$, \; $\nu = 0{,}05$, \; $J = 300$};
+
+  % ======================= (c) MaxEnt / regresión logística =======================
+  \node[titulo] at (110,-5) {(c) MaxEnt: \mdseries regresión logística};
+  % leyenda
+  \node[pres] at (118,-10.5) {};
+  \node[anchor=west, font=\scriptsize, inner sep=1pt] at (119.5,-10.5) {presencia};
+  \node[fondo] at (139,-10.5) {};
+  \node[anchor=west, font=\scriptsize, inner sep=1pt] at (140.5,-10.5) {fondo};
+  % región de presencia (lado positivo de la frontera)
+  \begin{scope}
+    \clip (116,-46) rectangle (154,-14);
+    \fill[pucazul!8] (116,-22.82) -- (154,-45.18) -- (154,-14) -- (116,-14) -- cycle;
+  \end{scope}
+  % ejes
+  \draw[flechafina, black!70] (116,-46) -- (155,-46);
+  \draw[flechafina, black!70] (116,-46) -- (116,-13);
+  \node[font=\scriptsize] at (135.5,-48.3) {$h_1(\mathbf{c})$};
+  \node[font=\scriptsize, rotate=90] at (113.3,-30) {$h_2(\mathbf{c})$};
+  % frontera
+  \draw[thick, pucazul!60!black] (116,-22.82) -- (154,-45.18)
+    node[pos=0.22, above, sloped, font=\scriptsize, inner sep=0.8pt] {$\mathbf{w}^{\mathrm T} h(\mathbf{c}) + b = 0$};
+  % presencias (una, (124,-32), queda del lado del fondo: error de clasificación)
+  \foreach \p in {(126,-22),(132,-21),(138,-26),(144,-24),(148,-33),(141,-31),(135,-28),(150,-40),(131,-25),(146,-37),(124,-32)}
+    \node[pres] at \p {};
+  % fondo (uno, (139,-33), queda del lado de las presencias: error de clasificación)
+  \foreach \p in {(119,-42),(123,-38),(128,-44),(133,-40),(120,-30),(126,-35),(137,-43),(142,-42),(131,-36),(139,-33),(147,-45)}
+    \node[fondo] at \p {};
+  \node[font=\scriptsize] at (135,-53) {$P(y{=}1 \mid \mathbf{c}) = \sigma\!\left(\mathbf{w}^{\mathrm T} h(\mathbf{c}) + b\right)$};
+\end{tikzpicture}

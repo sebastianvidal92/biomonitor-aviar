@@ -33,6 +33,7 @@ def get_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
     p.add_argument("--backbone", default=CONFIG["train_audio"]["backbone"])
     p.add_argument("--max-windows", type=int, default=12)
+    p.add_argument("--tag", default="", help="sufijo del checkpoint (ej. 'sinreg'); vacío = modelo principal")
     return p.parse_args()
 
 
@@ -71,7 +72,8 @@ def main() -> None:
     test = manifest[manifest["split"] == "test"].reset_index(drop=True)
 
     model = build_audio_model(args.backbone, num_classes=len(label_map), pretrained=False)
-    ckpt = PROJECT_ROOT / CONFIG["paths"]["models"] / f"audio_{args.backbone}.pt"
+    suffix = f"_{args.tag}" if args.tag else ""
+    ckpt = PROJECT_ROOT / CONFIG["paths"]["models"] / f"audio_{args.backbone}{suffix}.pt"
     model.load_state_dict(torch.load(ckpt, map_location=device))
     model.eval().to(device)
 
@@ -113,7 +115,7 @@ def main() -> None:
     per_class = pd.DataFrame(rep).T.loc[sorted(label_map)][["precision", "recall", "f1-score", "support"]]
     reports_dir = PROJECT_ROOT / "reports"
     reports_dir.mkdir(exist_ok=True)
-    out = reports_dir / f"audio_{args.backbone}_per_class.csv"
+    out = reports_dir / f"audio_{args.backbone}{suffix}_per_class.csv"
     per_class.to_csv(out)
     print(f"\n  Peores 8 especies por F1 (agregado):")
     for sp, row in per_class.sort_values("f1-score").head(8).iterrows():

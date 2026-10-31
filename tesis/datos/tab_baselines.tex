@@ -1,0 +1,21 @@
+\begin{table}[!htb]
+  \centering\small
+  \caption{\textit{Baselines} de referencia frente a los modelos ajustados (conjuntos de prueba). \textit{Frozen embeddings}: regresión logística sobre las representaciones de un modelo preentrenado sin ajustar. IA generativa: modelo de IA generativa multimodal consultado con la fotografía y la lista cerrada de especies.}
+  \label{tab:baselines}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}l >{\raggedright\arraybackslash}X r r r@{}}
+    \toprule
+    Modalidad & Método & \textit{Accuracy} & F1 macro & AUC macro \\
+    \midrule
+    Audio & \textit{Frozen embeddings} de EfficientNet-B0 (ImageNet) + regresión logística & 0,547 & 0,545 & 0,901 \\
+    Audio & \textit{Frozen embeddings} de AST (AudioSet) + regresión logística & 0,784 & 0,769 & 0,980 \\
+    Imagen & \textit{Frozen embeddings} de EfficientNet-B3 (ImageNet) + regresión logística & 0,775 & 0,760 & 0,985 \\
+    Imagen & IA generativa (claude-opus-5-5, \textit{zero-shot}, esfuerzo \textit{low}) & 0,803 & 0,765 & -- \\
+    Imagen & IA generativa (claude-opus-5-5, \textit{few-shot}, esfuerzo \textit{low}) & 0,817 & 0,779 & -- \\
+    \midrule
+    Audio & \textbf{CNN EfficientNet-B0 ajustada (este trabajo)} & 0,858 & 0,858 & 0,991 \\
+    Audio & \textbf{AST ajustado (este trabajo)} & 0,870 & 0,864 & 0,993 \\
+    Imagen & \textbf{EfficientNet-B3 ajustada + TTA (este trabajo)} & 0,848 & 0,808 & 0,990 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}

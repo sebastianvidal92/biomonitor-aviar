@@ -1,0 +1,23 @@
+\begin{table}[!htb]
+  \centering\footnotesize
+  \caption{Intervalos de confianza al \SI{95}{\percent} de las métricas principales de identificación. \textit{Bootstrap} percentil con \num{2000} remuestreos de las muestras de prueba (fusión: 300 remuestreos estratificados por especie de grabaciones y fotografías, con el pareo recalculado); los \textit{baselines} de \textit{frozen embeddings} usan el intervalo normal de una proporción.}
+  \label{tab:ic}
+  \begin{tabular}{@{}l r r r@{}}
+    \toprule
+    Modelo & $n$ & \textit{Accuracy} [IC 95\,\%] & F1 macro [IC 95\,\%] \\
+    \midrule
+    Audio: CNN EfficientNet-B0 (agregado) & 393 & 0,858 [0,822; 0,891] & 0,858 [0,804; 0,880] \\
+    Audio: AST (agregado) & 393 & 0,870 [0,837; 0,903] & 0,864 [0,811; 0,889] \\
+    Imagen: EfficientNet-B3 (TTA) & 1040 & 0,848 [0,826; 0,869] & 0,808 [0,779; 0,827] \\
+    IA generativa \textit{zero-shot} & 1040 & 0,803 [0,779; 0,828] & 0,765 [0,733; 0,787] \\
+    IA generativa \textit{few-shot} & 1040 & 0,817 [0,793; 0,840] & 0,779 [0,748; 0,801] \\
+    \textit{Frozen embeddings}: EfficientNet-B0 (ImageNet) & 393 & 0,547 [0,498; 0,596] & 0,545 \\
+    \textit{Frozen embeddings}: AST (AudioSet) & 393 & 0,784 [0,743; 0,824] & 0,769 \\
+    \textit{Frozen embeddings}: EfficientNet-B3 (ImageNet) & 1040 & 0,775 [0,750; 0,800] & 0,760 \\
+    Pareo: audio solo & 1590 & 0,861 [0,827; 0,893] & -- \\
+    Pareo: imagen sola & 1590 & 0,819 [0,792; 0,847] & -- \\
+    Pareo: \textit{late fusion} ($\alpha = 0{,}5$) & 1590 & 0,942 [0,924; 0,959] & -- \\
+    Pareo: \textit{late fusion} geométrica & 1590 & 0,955 [0,937; 0,972] & -- \\
+    \bottomrule
+  \end{tabular}
+\end{table}

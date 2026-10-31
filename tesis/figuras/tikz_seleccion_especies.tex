@@ -1,0 +1,67 @@
+% Figura: construcción del conjunto de 55 especies objetivo (embudo de selección).
+% Se incluye con \input dentro de un entorno figure. Requiere las bibliotecas
+% arrows.meta y positioning, y los colores pucazul / miaamarillo del preámbulo.
+\begin{tikzpicture}[
+    node distance=4mm and 5mm,
+    bloque/.style={draw, rounded corners, align=center, minimum height=8mm,
+                   inner sep=3pt, font=\small},
+    conjunto/.style={bloque, fill=pucazul!15},
+    filtro/.style={bloque, fill=black!5, font=\footnotesize},
+    descarte/.style={bloque, fill=red!10, font=\footnotesize, minimum width=38mm},
+    suma/.style={bloque, fill=pucazul!15, font=\footnotesize,
+                 minimum width=46mm, minimum height=14mm},
+    final/.style={bloque, fill=green!12, font=\small\bfseries},
+    flecha/.style={-{Latex[length=2mm]}, thick},
+    descartef/.style={flecha, dashed, red!60!black}]
+
+  % --- Columna central: embudo de filtros ---
+  \node[conjunto, minimum width=104mm] (n147)
+    {\textbf{147} aves clasificadas por el RCE};
+  \node[filtro, below=of n147, minimum width=92mm] (f1)
+    {Filtro: distribución continental\\(se excluyen islas oceánicas)};
+  \node[conjunto, below=of f1, minimum width=88mm] (n133)
+    {\textbf{133} especies de distribución continental};
+  \node[filtro, below=of n133, minimum width=76mm] (f2)
+    {Filtro: interés de conservación\\(CR, EN, VU o endémica)};
+  \node[conjunto, below=of f2, minimum width=72mm] (n59)
+    {\textbf{59} candidatas};
+  \node[filtro, below=of n59, minimum width=60mm] (f3)
+    {Censo de datos en\\Xeno-canto y GBIF};
+  % La segunda línea va partida en dos para que la caja no supere los 56mm
+  % y el embudo siga decreciendo (104, 92, 88, 76, 72, 60, 56 mm).
+  \node[conjunto, below=of f3, minimum width=56mm] (n14)
+    {\textbf{14} de interés de conservación\\
+     {\footnotesize 1 CR, 5 EN, 7 VU}\\{\footnotesize y el choroy (endémico, LC)}};
+
+  % --- Nodo de suma y resultado final ---
+  \node[circle, draw, thick, fill=white, inner sep=1pt, font=\small\bfseries,
+        below=10mm of n14] (mas) {$+$};
+  \node[final, below=9mm of mas, minimum width=104mm] (n55)
+    {55 especies objetivo};
+
+  % --- Descartes laterales (censo de datos) ---
+  \node[descarte, left=of f3] (d1)
+    {Descartadas: pelágicas\\e insulares\\(unas 25 especies)};
+  \node[descarte, right=of f3] (d2)
+    {Descartadas: menos de\\20 grabaciones globales};
+
+  % --- Conjuntos que se agregan al núcleo ---
+  \node[suma, left=11mm of mas] (a6)
+    {$+\,$\textbf{6} endémicas continentales\\con grabaciones suficientes};
+  \node[suma, right=11mm of mas] (a35)
+    {$+\,$\textbf{35} especies comunes con\\más grabaciones chilenas\\(masa de entrenamiento)};
+
+  % --- Flechas ---
+  \draw[flecha] (n147) -- (f1);
+  \draw[flecha] (f1) -- (n133);
+  \draw[flecha] (n133) -- (f2);
+  \draw[flecha] (f2) -- (n59);
+  \draw[flecha] (n59) -- (f3);
+  \draw[flecha] (f3) -- (n14);
+  \draw[flecha] (n14) -- (mas);
+  \draw[flecha] (mas) -- (n55);
+  \draw[flecha] (a6) -- (mas);
+  \draw[flecha] (a35) -- (mas);
+  \draw[descartef] (f3) -- (d1);
+  \draw[descartef] (f3) -- (d2);
+\end{tikzpicture}

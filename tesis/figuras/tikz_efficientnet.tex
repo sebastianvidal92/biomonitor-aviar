@@ -1,0 +1,129 @@
+% Figura: EfficientNet -- bloque MBConv (a), EfficientNet-B0 de audio (b) y escalado compuesto (c).
+% Se incluye con \input dentro de un entorno figure. Requiere las bibliotecas TikZ
+% arrows.meta, positioning, fit, calc y decorations.pathreplacing (ya cargadas en preambulo.tex).
+\begin{tikzpicture}[
+    font=\footnotesize,
+    bloque/.style={draw, rounded corners=2pt, align=center, minimum height=10mm,
+                   inner sep=2pt, font=\footnotesize},
+    datos/.style={bloque, fill=pucazul!15},
+    capa/.style={bloque, fill=miaamarillo!30},
+    proc/.style={bloque, fill=black!5},
+    salida/.style={bloque, fill=green!12},
+    op/.style={draw, circle, inner sep=0pt, minimum size=4.5mm, fill=white, font=\small},
+    celda/.style={draw, rounded corners=1.5pt, align=center, fill=miaamarillo!30,
+                  minimum height=13mm, minimum width=10mm, inner sep=1pt, font=\scriptsize},
+    cajab/.style={draw, rounded corners=2pt, align=center, minimum height=13mm,
+                  inner sep=1.5pt, font=\scriptsize},
+    flecha/.style={-{Latex[length=2mm]}, thick},
+    etiq/.style={font=\scriptsize, inner sep=1pt},
+    panel/.style={font=\small\bfseries, anchor=west, inner sep=0pt}]
+
+  % ================= (a) Bloque MBConv =================
+  \node[panel] at (0,0) {(a) Bloque MBConv (expansión $\times 6$; kernel $k{\times}k$ con $k{=}3$ o $5$)};
+
+  \node[datos, anchor=west, minimum width=14mm] (in) at (0,-18mm)
+        {Entrada\\$H{\times}W{\times}C$};
+  \node[capa, right=4.5mm of in, minimum width=25mm] (exp)
+        {Conv $1{\times}1$\\expansión ($\to 6C$)\\{\scriptsize BN + SiLU}};
+  \node[capa, right=6mm of exp, minimum width=25mm] (dw)
+        {Conv depthwise\\$k{\times}k$, stride $s$\\{\scriptsize BN + SiLU}};
+  \node[op, right=6mm of dw] (mult) {$\otimes$};
+  \node[capa, right=4.5mm of mult, minimum width=25mm] (proj)
+        {Conv $1{\times}1$\\proyección ($\to C'$)\\{\scriptsize BN, sin activación}};
+  \node[op, right=6mm of proj] (add) {$\oplus$};
+  \node[salida, right=4.5mm of add, minimum width=14mm] (out)
+        {Salida\\$H'{\times}W'{\times}C'$};
+
+  \draw[flecha] (in) -- (exp);
+  \draw[flecha] (exp) -- (dw)   node[etiq, midway, above] {$6C$};
+  \draw[flecha] (dw)  -- (mult) node[etiq, midway, above] {$6C$};
+  \draw[flecha] (mult) -- (proj);
+  \draw[flecha] (proj) -- (add) node[etiq, midway, above] {$C'$};
+  \draw[flecha] (add) -- (out);
+
+  % atajo residual
+  \coordinate (sc) at ($(in.east)!0.5!(exp.west)$);
+  \draw[flecha, dashed] (sc) -- ([yshift=9.5mm]sc) -| (add.north)
+        node[etiq, pos=0.25, above] {atajo (identidad), solo si $s{=}1$ y $C'{=}C$};
+
+  % rama Squeeze-and-Excitation
+  \node[proc, below=12.5mm of dw, minimum width=19mm] (pool)
+        {Pooling global\\$1{\times}1{\times}6C$};
+  \node[proc, right=3mm of pool, minimum width=19mm] (fc1)
+        {Densa ($6C\to C/4$)\\SiLU};
+  \node[proc, right=3mm of fc1, minimum width=19mm] (fc2)
+        {Densa ($C/4\to 6C$)\\sigmoide};
+  \node[draw, dashed, rounded corners=2pt, inner sep=1.5mm,
+        fit=(pool)(fc1)(fc2),
+        label={[font=\scriptsize]below:Squeeze-and-Excitation (SE)}] (sebox) {};
+  \draw[flecha] (dw.south) -- (pool.north);
+  \draw[flecha] (pool) -- (fc1);
+  \draw[flecha] (fc1) -- (fc2);
+  \coordinate (ret) at ($(fc2.north)+(0,7mm)$);
+  \draw[flecha] (fc2.north) -- (fc2.north |- ret) -- (mult.south |- ret) -- (mult.south);
+  \node[etiq, anchor=south west] at ($(mult.south |- ret)+(1.5mm,0.5mm)$)
+        {escala por canal $\mathbf{e}\in(0,1)^{6C}$};
+
+  % ================= (b) EfficientNet-B0 =================
+  \coordinate (b0) at (0,-62mm);
+  \node[panel] at (b0) {(b) EfficientNet-B0 de audio: stem, 7 etapas MBConv y cabeza de clasificación};
+
+  \node[cajab, fill=pucazul!15, anchor=west, minimum width=13mm] (bin) at ([yshift=-14mm]b0)
+        {Log-mel\\$128{\times}501$\\1 canal};
+  \node[cajab, fill=miaamarillo!30, right=3.2mm of bin, minimum width=13mm] (stem)
+        {Conv $3{\times}3$\\stem\\$C{=}32$};
+  \node[celda, right=3.2mm of stem] (s1) {$k{=}3$\\$\times 1$\\$C{=}16$};
+  \node[celda, right=0.6mm of s1] (s2) {$k{=}3$\\$\times 2$\\$C{=}24$};
+  \node[celda, right=0.6mm of s2] (s3) {$k{=}5$\\$\times 2$\\$C{=}40$};
+  \node[celda, right=0.6mm of s3] (s4) {$k{=}3$\\$\times 3$\\$C{=}80$};
+  \node[celda, right=0.6mm of s4] (s5) {$k{=}5$\\$\times 3$\\$C{=}112$};
+  \node[celda, right=0.6mm of s5] (s6) {$k{=}5$\\$\times 4$\\$C{=}192$};
+  \node[celda, right=0.6mm of s6] (s7) {$k{=}3$\\$\times 1$\\$C{=}320$};
+  \node[cajab, fill=miaamarillo!30, right=3.2mm of s7, minimum width=13mm] (head)
+        {Conv $1{\times}1$\\$C{=}1280$};
+  \node[cajab, fill=black!5, right=3.2mm of head, minimum width=12mm] (gpool)
+        {Pooling\\global\\$1280$};
+  \node[cajab, fill=green!12, right=3.2mm of gpool, minimum width=14.5mm] (fc)
+        {Densa\\55 especies\\softmax};
+
+  \draw[flecha] (bin) -- (stem);
+  \draw[flecha] (stem) -- (s1);
+  \draw[flecha] (s7) -- (head);
+  \draw[flecha] (head) -- (gpool);
+  \draw[flecha] (gpool) -- (fc);
+
+  \draw[decorate, decoration={brace, amplitude=2.5pt}]
+        (s1.north west) -- (s7.north east)
+        node[midway, above=3pt, etiq] {7 etapas MBConv (16 bloques; expansión $\times 1$ en la 1.\textsuperscript{a}, $\times 6$ en el resto)};
+
+  \foreach \n in {stem, s2, s3, s4, s6}
+     \node[etiq, below=0.6mm of \n] {$\div 2$};
+
+  \node[etiq, anchor=north west, text width=152mm, align=left] at ([yshift=-26mm]b0)
+        {$k$: tamaño del kernel depthwise; $\times n$: bloques por etapa; $C$: canales de salida;
+         $\div 2$: la resolución espacial se reduce a la mitad (stride 2); a la salida de la
+         7.\textsuperscript{a} etapa es $1/32$ de la entrada. Cada bloque es el de (a), sin conv.\ de
+         expansión en la 1.\textsuperscript{a} etapa.};
+
+  % ================= (c) Escalado compuesto =================
+  \coordinate (c0) at (0,-102mm);
+  \node[panel] at (c0) {(c) Escalado compuesto: de B0 a B3};
+
+  \node[proc, anchor=north west, align=flush left, text width=80mm, inner sep=4pt,
+        execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}] (cform)
+        at ([yshift=-3.5mm]c0)
+        {Un único coeficiente $\phi$ escala a la vez la profundidad $d$ (n.\textsuperscript{o} de bloques),
+         el ancho $w$ (canales) y la resolución $r$ de B0:\\[2pt]
+         \qquad $d=\alpha^{\phi},\qquad w=\beta^{\phi},\qquad r=\gamma^{\phi},\qquad
+                 \alpha\,\beta^{2}\gamma^{2}\approx 2,$\\[2pt]
+         con $\alpha,\beta,\gamma\ge 1$ fijados en B0 ($\alpha{=}1{,}2$, $\beta{=}1{,}1$, $\gamma{=}1{,}15$),
+         de modo que el costo (FLOPs) crece $\approx 2^{\phi}$.};
+  \node[capa, anchor=north west, inner sep=4pt] (ctab) at ([xshift=4mm]cform.north east)
+        {\begin{tabular}{@{}l@{\hspace{6pt}}c@{\hspace{6pt}}c@{\hspace{6pt}}c@{}}
+           \textbf{Red} & $\phi$ & \textbf{Entrada} & \textbf{Parámetros}\\ \hline
+           B0 (audio)  & 0 & 224 px$^{*}$ & 4,1 M \\
+           B3 (imagen) & 3 & 384 px       & 10,8 M \\[1pt]
+           \multicolumn{4}{@{}l@{}}{\scriptsize $^{*}$nominal; aquí recibe log-mel $128{\times}501$.}\\[-2pt]
+           \multicolumn{4}{@{}l@{}}{\scriptsize Parámetros con cabezas de 55 y 53 clases.}
+         \end{tabular}};
+\end{tikzpicture}

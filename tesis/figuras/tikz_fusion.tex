@@ -1,0 +1,93 @@
+% Tres estrategias de fusión multimodal (early, intermediate, late).
+% Incluir con \input dentro de un entorno figure. Requiere las bibliotecas
+% TikZ positioning, fit, calc, backgrounds y arrows.meta (ya en el preámbulo).
+\begin{tikzpicture}[x=1mm, y=1mm,
+  font=\footnotesize\linespread{1}\selectfont,
+  bloque/.style={draw, rounded corners, align=center, minimum height=8mm,
+                 minimum width=21mm, inner sep=1.2mm, font=\footnotesize\linespread{1}\selectfont},
+  dato/.style={bloque, fill=pucazul!15},
+  proc/.style={bloque, fill=black!5},
+  modelo/.style={bloque, fill=miaamarillo!30},
+  salida/.style={bloque, fill=green!12},
+  ancho/.style={minimum width=45mm},
+  medio/.style={minimum width=30mm},
+  titulo/.style={font=\footnotesize\bfseries\linespread{1}\selectfont, align=center},
+  flecha/.style={-{Latex[length=2mm]}, thick}]
+
+  % ---------- Columna (a): early fusion (centro x = 0) ----------
+  \node[titulo] (t1) at (0,10) {(a) Early fusion};
+  \node[dato] (a1)  at (-12.5,0)   {Audio\\\scriptsize CNN (B0)};
+  \node[dato] (v1)  at (12.5,0)    {Imagen\\\scriptsize EfficientNet-B3};
+  \node[dato] (ea1) at (-12.5,-13) {embedding $\mathbf{h}_a$\\1280-d};
+  \node[dato] (ev1) at (12.5,-13)  {embedding $\mathbf{h}_v$\\1536-d};
+  \node[proc, ancho] (cat1) at (0,-26)
+    {Concatenación $[\mathbf{h}_a;\,\mathbf{h}_v]$\\2816-d};
+  \node[modelo, medio] (fc1) at (0,-39) {Capa densa\\256 unidades};
+  \node[salida] (out1) at (0,-52) {softmax\\53 especies};
+
+  \draw[flecha] (a1) -- (ea1);
+  \draw[flecha] (v1) -- (ev1);
+  \draw[flecha] (ea1.south) -- (ea1.south |- cat1.north);
+  \draw[flecha] (ev1.south) -- (ev1.south |- cat1.north);
+  \draw[flecha] (cat1) -- (fc1);
+  \draw[flecha] (fc1) -- (out1);
+
+  % ---------- Columna (b): intermediate fusion (centro x = 53) ----------
+  \node[titulo] (t2) at (53,10) {(b) Intermediate fusion};
+  \node[dato] (a2)  at (40.5,0)   {Audio\\\scriptsize CNN (B0)};
+  \node[dato] (v2)  at (65.5,0)   {Imagen\\\scriptsize EfficientNet-B3};
+  \node[dato] (ea2) at (40.5,-13) {embedding $\mathbf{h}_a$\\1280-d};
+  \node[dato] (ev2) at (65.5,-13) {embedding $\mathbf{h}_v$\\1536-d};
+  \node[modelo] (pa2) at (40.5,-26) {Proyección\\$\to 256$-d};
+  \node[modelo] (pv2) at (65.5,-26) {Proyección\\$\to 256$-d};
+  \node[proc, ancho] (cat2) at (53,-39) {Concatenación\\512-d};
+  \node[modelo, medio] (fc2) at (53,-52) {Capa densa\\256 unidades};
+  \node[salida] (out2) at (53,-65) {softmax\\53 especies};
+
+  \draw[flecha] (a2) -- (ea2);
+  \draw[flecha] (v2) -- (ev2);
+  \draw[flecha] (ea2) -- (pa2);
+  \draw[flecha] (ev2) -- (pv2);
+  \draw[flecha] (pa2.south) -- (pa2.south |- cat2.north);
+  \draw[flecha] (pv2.south) -- (pv2.south |- cat2.north);
+  \draw[flecha] (cat2) -- (fc2);
+  \draw[flecha] (fc2) -- (out2);
+
+  % ---------- Columna (c): late fusion, sistema final (centro x = 106) ----------
+  \node[titulo] (t3) at (106,10) {(c) Late fusion (sistema final)};
+  \node[dato] (a3)  at (93.5,0)    {Audio\\\scriptsize CNN (B0)};
+  \node[dato] (v3)  at (118.5,0)   {Imagen\\\scriptsize EfficientNet-B3};
+  \node[dato] (ea3) at (93.5,-13)  {embedding $\mathbf{h}_a$\\1280-d};
+  \node[dato] (ev3) at (118.5,-13) {embedding $\mathbf{h}_v$\\1536-d};
+  \node[dato] (ca3) at (93.5,-26)  {Clasificador\\de audio};
+  \node[dato] (cv3) at (118.5,-26) {Clasificador\\de imagen};
+  % Las filas inferiores van 2 mm (y luego 4 mm) más abajo que en (a) y (b)
+  % porque la caja de $p_v$ tiene tres líneas.
+  \node[proc] (pa3) at (93.5,-41)  {$p_a$ (softmax)\\55 especies};
+  \node[proc] (pv3) at (118.5,-41) {$p_v$ (softmax)\\\scriptsize 53 clases\\\scriptsize proyectadas a 55};
+  \node[proc, minimum width=34mm] (mix3) at (106,-56)
+    {$p = \alpha\,p_a + (1-\alpha)\,p_v$\\$\alpha = 0{,}5$};
+  \node[salida, minimum width=26mm] (out3) at (106,-69)
+    {$\hat{y} = \operatorname*{arg\,max}_k\, p_k$\\especie};
+  \node[font=\scriptsize\linespread{1}\selectfont, align=center] (nota3) at (106,-79)
+    {línea punteada: si falta una modalidad,\\se usa solo la otra};
+
+  \draw[flecha] (a3) -- (ea3);
+  \draw[flecha] (v3) -- (ev3);
+  \draw[flecha] (ea3) -- (ca3);
+  \draw[flecha] (ev3) -- (cv3);
+  \draw[flecha] (ca3) -- (pa3);
+  \draw[flecha] (cv3) -- (pv3);
+  \draw[flecha] (pa3.south) -- (pa3.south |- mix3.north);
+  \draw[flecha] (pv3.south) -- (pv3.south |- mix3.north);
+  \draw[flecha] (mix3) -- (out3);
+  % Modalidad ausente: la probabilidad de la otra rama pasa directo al argmax
+  \draw[flecha, dashed] ([xshift=-8mm]pa3.south) |- (out3.west);
+  \draw[flecha, dashed] ([xshift=8mm]pv3.south)  |- (out3.east);
+
+  % Marco que destaca la estrategia adoptada en el sistema
+  \begin{scope}[on background layer]
+    \node[draw=pucazul, thick, rounded corners=2mm, fill=pucazul!4,
+          inner sep=2.5mm, fit=(t3)(a3)(v3)(out3)(nota3)] {};
+  \end{scope}
+\end{tikzpicture}

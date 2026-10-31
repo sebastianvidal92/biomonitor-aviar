@@ -1,0 +1,102 @@
+% Figura: red neuronal conjunta multiespecie para la distribución (SDM).
+% Se incluye con \input dentro de un entorno figure. Unidades: mm.
+% Notación de salida unificada con el capítulo 3: P(y_k = 1 | c).
+\begin{tikzpicture}[
+    x=1mm, y=1mm, font=\footnotesize,
+    neurona/.style={circle, draw, thin, minimum size=4.4mm, inner sep=0pt},
+    cov/.style={neurona, fill=pucazul!15},
+    emb/.style={neurona, fill=miaamarillo!30},
+    oculta/.style={neurona, fill=miaamarillo!30},
+    logit/.style={neurona, fill=green!12, minimum size=5mm},
+    caja/.style={draw, rounded corners, align=center, fill=green!12,
+                 inner sep=3pt, minimum height=8mm},
+    etiq/.style={align=center, font=\footnotesize},
+    flecha/.style={-{Latex[length=2mm]}, thick},
+    flechita/.style={-{Latex[length=1.5mm]}, semithick, pucgris},
+    conexion/.style={black!30, line width=0.3pt},
+    puntos/.style={inner sep=0pt}]
+
+  % ---------- Entrada: seis covariables ----------
+  \foreach \y/\n/\t in {27/c1/NDVI, 22/c2/Temperatura, 17/c3/Precipitación,
+                        12/c4/Elevación, 7/c5/sen(mes), 2/c6/cos(mes)} {
+    \node[cov] (\n) at (0,\y) {};
+    \node[anchor=east, inner sep=1pt] at (-5,\y) {\t};
+  }
+
+  % ---------- Entrada: vector de embedding de la especie k ----------
+  \node[emb] (e1) at (0,-4)  {};
+  \node[emb] (e2) at (0,-9)  {};
+  \node[puntos] at (0,-14) {$\vdots$};
+  \node[emb] (e3) at (0,-19) {};
+
+  % ---------- Tabla de embeddings (54 especies x 8 dimensiones) ----------
+  % Esquema: 7 filas de 2 mm más una fila de puntos suspensivos (3 mm,
+  % entre y=-16 e y=-19) que indica las filas omitidas; la fila k es la
+  % cuarta (resaltada). Ocho columnas = ocho dimensiones del embedding.
+  \fill[miaamarillo!30] (-25,-6)  rectangle (-9,-16);
+  \fill[miaamarillo!30] (-25,-19) rectangle (-9,-23);
+  \fill[miaamarillo]    (-25,-12) rectangle (-9,-14);
+  \foreach \i in {1,...,7} {
+    \draw[black!40, very thin] (-25+2*\i,-6)  -- (-25+2*\i,-16);
+    \draw[black!40, very thin] (-25+2*\i,-19) -- (-25+2*\i,-23);
+  }
+  \foreach \yy in {-8,-10,-12,-14,-16,-19,-21} {
+    \draw[black!40, very thin] (-25,\yy) -- (-9,\yy);
+  }
+  \draw[thin] (-25,-6) rectangle (-9,-23);
+  \node[puntos, font=\scriptsize] at (-17,-17.5) {$\vdots$};
+  \node[anchor=east, inner sep=1pt] at (-25.8,-13) {fila $k$};
+  \node[etiq, anchor=north] at (-17,-24)
+    {Tabla de embeddings\\$\mathbf{E}\in\mathbb{R}^{54\times 8}$ (aprendida)};
+  % búsqueda de la fila k -> vector e_k
+  \draw[flechita] (-9,-13) -- (e1.west);
+  \draw[flechita] (-9,-13) -- (e2.west);
+  \draw[flechita] (-9,-13) -- (e3.west);
+  \node[font=\scriptsize, inner sep=0pt] at (-6.5,-19) {$\mathbf{e}_k$};
+
+  % ---------- Capas ocultas (64 unidades cada una) ----------
+  \foreach \y/\i in {25/1, 19/2, 13/3, 7/4, -5/5, -11/6, -17/7} {
+    \node[oculta] (h1\i) at (24,\y) {};
+    \node[oculta] (h2\i) at (48,\y) {};
+  }
+  \node[puntos] at (24,1) {$\vdots$};
+  \node[puntos] at (48,1) {$\vdots$};
+
+  % ---------- Salida ----------
+  \node[logit] (z) at (70,4) {$z$};
+  \node[caja] (p) at (102,4)
+    {$P(y_k=1\mid\mathbf{c})=\sigma(z)$\\[1pt]$\sigma(z)=1/(1+e^{-z})$};
+  \draw[flecha] (z) -- (p) node[midway, above, font=\scriptsize, inner sep=2pt] {sigmoide};
+
+  % ---------- Conexiones densas y recuadro de concatenación ----------
+  \begin{scope}[on background layer]
+    \node[draw, dashed, rounded corners, fill=black!5, inner sep=1.5mm,
+          fit=(c1)(e3)] (entrada) {};
+    \foreach \a in {c1,c2,c3,c4,c5,c6,e1,e2,e3}
+      \foreach \b in {1,...,7} \draw[conexion] (\a.east) -- (h1\b.west);
+    \foreach \a in {1,...,7}
+      \foreach \b in {1,...,7} \draw[conexion] (h1\a.east) -- (h2\b.west);
+    \foreach \a in {1,...,7} \draw[conexion] (h2\a.east) -- (z.west);
+  \end{scope}
+
+  % ---------- Etiquetas de capa ----------
+  \node[etiq, anchor=south] at (0,31.5)
+    {Concatenación\\$\mathbf{x}=[\mathbf{c};\mathbf{e}_k]\in\mathbb{R}^{14}$};
+  \node[etiq, anchor=south] at (24,31.5) {Capa oculta 1\\64 ReLU\\dropout 0,3};
+  \node[etiq, anchor=south] at (48,31.5) {Capa oculta 2\\64 ReLU\\dropout 0,3};
+  \node[etiq, anchor=south] at (70,31.5) {Salida\\1 logit};
+
+  % ---------- Fórmulas ----------
+  % Ancladas 3 mm más abajo que la etiqueta de la tabla para que no se
+  % toquen cuando \onehalfspacing (preámbulo de la tesis) estira las
+  % líneas de la etiqueta.
+  \node[anchor=north] at (48,-35)
+    {$\mathbf{h}_1=\mathrm{ReLU}(\mathbf{W}_1\mathbf{x}+\mathbf{b}_1)\qquad
+      \mathbf{h}_2=\mathrm{ReLU}(\mathbf{W}_2\mathbf{h}_1+\mathbf{b}_2)\qquad
+      z=\mathbf{w}_3^{\top}\mathbf{h}_2+b_3$};
+
+  % ---------- Nota al pie ----------
+  \node[font=\footnotesize\itshape, align=center] at (41,-45)
+    {Una sola red para las 54 especies: las covariables comparten pesos
+     y la especie entra como vector aprendido};
+\end{tikzpicture}

@@ -38,3 +38,10 @@ marca_uc/Captura*
 
 # Sistema
 .DS_Store
+
+# Libros de referencia con derechos de autor, material del curso y revisiones del profesor
+LIBROS/
+.Rhistory
+tesis/annotated-*.pdf
+tesis/*comentarios*.pdf
+tesis/revision_recomendaciones_MIA.md

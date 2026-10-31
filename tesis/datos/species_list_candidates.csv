@@ -1,0 +1,152 @@
+scientific_name,common_name,order,family,endemic,continental,category_raw,category_primary,proceso_rce,in_focus,habitat_group
+Accipiter chilensis,"peuquito, gavilán chileno",Accipitriformes,Accipitridae,False,True,LC,LC,16,False,terrestrial
+Agriornis albicauda,mero de la puna,Passeriformes,Tyrannidae,False,True,VU,VU,16,True,terrestrial
+Anairetes fernandezianus,cachudito de Juan Fernández,Passeriformes,Tyrannidae,True,False,EN-R,EN,1,True,terrestrial
+Anairetes reguloides,cachudito de cresta blanca,Passeriformes,Tyrannidae,False,True,EN,EN,16,True,terrestrial
+Anas bahamensis,pato gargantillo,Anseriformes,Anatidae,False,True,LC,LC,12,False,terrestrial
+Anous stolidus,gaviotín de San Félix,Charadriiformes,Laridae,False,True,VU,VU,14,True,coastal_shorebird
+Aphrastura masafuerae,rayadito de Más Afuera,Passeriformes,Furnariidae,True,False,CR,CR,15,True,terrestrial
+Aptenodytes forsteri,pingüino emperador,Sphenisciformes,Spheniscidae,False,False,VU,VU,18,True,pelagic
+Aptenodytes patagonicus,pingüino rey,Sphenisciformes,Spheniscidae,False,True,EN,EN,18,True,pelagic
+Ardea cocoi,garza cuca,Pelecaniformes,Ardeidae,False,True,LC,LC,12,False,terrestrial
+Ardenna creatopus,fardela blanca,Procellariiformes,Procellariidae,False,True,EN,EN,18,True,pelagic
+Ardenna grisea,"fardela negra, yegua",Procellariiformes,Procellariidae,False,True,NT,NT,15,False,pelagic
+Asio flammeus,nuco,Strigiformes,Strigidae,False,True,LC,LC,12,False,terrestrial
+Attagis gayi,perdicita cordillerana,Charadriiformes,Thinocoridae,False,True,LC,LC,12,False,coastal_shorebird
+Attagis malouinus,"perdicita austral, perdicita cordillerana austral",Charadriiformes,Thinocoriidae,False,True,LC,LC,19,False,coastal_shorebird
+Bartramia longicauda,batitú,Charadriiformes,Scolopacidae,False,True,LC,LC,17,False,coastal_shorebird
+Burhinus superciliaris,chorlo cabezón,Charadriiformes,Burhinidae,False,True,VU,VU,18,True,coastal_shorebird
+Buteo albigula,aguilucho chico,Accipitriformes,Accipitridae,False,True,NT,NT,16,False,terrestrial
+Buteo ventralis,aguilucho de cola rojiza,Accipitriformes,Accipitridae,False,True,VU,VU,15,True,terrestrial
+Calidris canutus,playero ártico,Charadriiformes,Scolopacidae,False,True,EN,EN,2,True,coastal_shorebird
+Calidris fuscicollis,playero de lomo blanco,Charadriiformes,Scolopacidae,False,True,LC,LC,19,False,coastal_shorebird
+Calidris pusilla,"playero semipalmado, Semipalmated Sandpiper (inglés)",Charadriiformes,Scolopacidae,False,True,NT,NT,20,False,coastal_shorebird
+Campephilus magellanicus,"carpintero negro, gallos del monte, rere (mapudungún)",Piciformes,Picidae,False,True,NT,NT,16,False,terrestrial
+Charadrius collaris,chorlo de collar,Charadriiformes,Charadriidae,False,True,NT,NT,17,False,coastal_shorebird
+Charadrius falklandicus,"chorlo de doble collar, chorlito de doble collar",Charadriiformes,Charadriidae,False,True,"VU (XV-X);
+LC (XI-XII)",VU,19,True,coastal_shorebird
+Charadrius modestus,chorlo chileno,Charadriiformes,Charadriidae,False,True,LC,LC,17,False,coastal_shorebird
+Charadrius nivosus,chorlo nevado,Charadriiformes,Charadriidae,False,True,VU,VU,15,True,coastal_shorebird
+Chloephaga hybrida,"caranca, cagüe, cauquén costero, cauquén blanco",Anseriformes,Anatidae,False,True,VU,VU,12,True,terrestrial
+Chloephaga melanoptera,"piuquén, piquén, guayata",Anseriformes,Anatidae,False,True,EN (V-XII); LC (XV-IV),EN,16,True,terrestrial
+Chloephaga picta,"caiquén, cauquén común",Anseriformes,Anatidae,False,True,VU,VU,19,True,terrestrial
+Chloephaga poliocephala,"canquén común, avutarda, cauquén real",Anseriformes,Anatidae,False,True,NT,NT,19,False,terrestrial
+Chloephaga rubidiceps,canquén colorado,Anseriformes,Anatidae,False,True,EN,EN,1,True,terrestrial
+Chroicocephalus serranus,gaviota andina,Charadriiformes,Laridae,False,True,LC,LC,15,False,coastal_shorebird
+Cinclodes oustaleti baeckstroemii,churrete chico de masafuera,Passeriformes,Furnariidae,True,False,VU,VU,4,True,terrestrial
+Conirostrum tamarugense,comesebo de los tamarugales,Passeriformes,Thraupidae,False,True,EN,EN,15,True,terrestrial
+Coscoroba coscoroba,"cisne coscoroba, coscoroba, cisne blanco",Anseriformes,Anatidae,False,True,LC,LC,16,False,terrestrial
+Cyanoliseus patagonus,tricahue,Psittaciformes,Psittacidae,False,True,EN (III-IV); VU (XV-II; V-RM-XII),EN,1,True,terrestrial
+Cygnus melancoryphus,"cisne de cuello negro, cisne cuellinegro, Kaum (Yagán), Thula (Mapudungún), Black-necked Swan (Inglés)",Anseriformes,Anatidae,False,True,LC,LC,16,False,terrestrial
+Diomedea antipodensis,albatros de las antípodas,Procellariiformes,Diomedeidae,False,True,EN,EN,17,True,pelagic
+Diomedea epomophora,albatros real del sur,Procellariiformes,Diomedeidae,False,True,VU,VU,17,True,pelagic
+Diomedea exulans,"albatros errante, albatros viajero",Procellariiformes,Diomedeidae,False,True,VU,VU,17,True,pelagic
+Diomedea sanfordi,albatros real del norte,Procellariiformes,Diomedeidae,False,True,EN,EN,17,True,pelagic
+Enicognathus leptorhynchus,choroy,Psittaciformes,Psittacidae,True,True,LC,LC,14,True,terrestrial
+Eudromia elegans,perdiz copetona o Martineta,Tinamiformes,Tinamidae,False,True,EN,EN,14,True,terrestrial
+Eudyptes chrysocome,pingüino penacho amarillo del sur,Sphenisciformes,Spheniscidae,False,True,LC,LC,18,False,pelagic
+Eudyptes chrysolophus,pingüino macaroni,Sphenisciformes,Spheniscidae,False,True,VU,VU,18,True,pelagic
+Eulidia yarrellii,"picaflor de Arica, estrellita chilena",Apodiformes,Trochilidae,True,True,CR,CR,13,True,terrestrial
+Falco peregrinus,halcón peregrino,Falconiformes,Falconidae,False,True,LC,LC,13,False,terrestrial
+Falco sparverius fernandenzis,cernícalo de Juan Fernández,Falconiformes,Falconidae,True,False,EN,EN,4,True,terrestrial
+Fregata minor,ave fragata grande,Suliformes,Fregatidae,False,False,VU,VU,14,True,terrestrial
+Fregetta grallaria,golondrina de mar de vientre blanco,Procellariiformes,Oceanitidae,False,False,EN,EN,4,True,pelagic
+Fulica cornuta,"tagua cornuda, polla de agua, pato negro, gallina, soca",Gruiformes,Rallidae,False,True,NT,NT,11,False,terrestrial
+Fulica gigantea,tagua gigante,Gruiformes,Gruidae,False,True,LC,LC,15,False,terrestrial
+Gallinago andina,becacina de la puna,Charadriiformes,Scolopacidae,False,True,NT,NT,18,False,coastal_shorebird
+Gallinago magellanica,becacina,Charadriiformes,Scolopacidae,False,True,LC,LC,12,False,coastal_shorebird
+Gallinago stricklandii,becacina grande,Charadriiformes,Scolopacidae,False,True,NT,NT,19,False,coastal_shorebird
+Geranoaetus poecilochrous,aguilucho de la puna,Accipitriformes,Accipitridae,False,True,DD,DD,16,False,terrestrial
+Geranoaetus polyosoma exsul,"aguilucho de Más Afuera, aguilucho de Juan Fernández, blindado",Accipitriformes,Accipitridae,True,False,CR,CR,17,True,terrestrial
+Haematopus ater,"pilpilén negro, pilpilén, ostrero",Charadriiformes,Haematopodidae,False,True,LC,LC,18,False,coastal_shorebird
+Haematopus palliatus,"pilpilén, pilpilén común, American Oystercatcher (Inglés)",Charadriiformes,Haematopodidae,False,True,NT,NT,16,False,coastal_shorebird
+Heteronetta atricapilla,pato rinconero,Anseriformes,Anatidae,False,True,LC,LC,12,False,terrestrial
+Hydrobates hornbyi,"golondrina de mar de collar, Ringed Storm Petrel (Inglés)",Procellariiformes,Hydrobatidae,False,True,VU,VU,16,True,pelagic
+Hydrobates markhami,"golondrina de mar negra, Markham’s storm-petrel",Procellariiformes,Hydrobatidae,False,True,EN,EN,14,True,pelagic
+Hydrobates tethys,"golondrina de mar peruana, Wedge-rumped Storm Petrel (Inglés)",Procellariiformes,Hydrobatidae,False,True,VU,VU,16,True,pelagic
+Ixobrychus involucris,huairavillo,Pelecaniformes,Ardeidae,False,True,LC,LC,12,False,terrestrial
+Larosterna inca,gaviotín monja,Charadriiformes,Laridae,False,True,NT,NT,15,False,coastal_shorebird
+Laterallus jamaicensis,pidencito,Gruiformes,Gruidae,False,True,EN (XV-III); NT (IV-XII),EN,15,True,terrestrial
+Leucophaeus modestus,gaviota garuma,Charadriiformes,Laridae,False,True,VU,VU,16,True,coastal_shorebird
+Leucophaeus pipixcan,"gaviota de Franklin, Franklin’s Gull (Inglés)",Charadriiformes,Laridae,False,True,LC,LC,16,False,coastal_shorebird
+Limosa haemastica,"zarapito de pico recto, aguja café, becasina de mar, Hudsonian Godwit (inglés)",Charadriiformes,Scolopacidae,False,True,VU,VU,18,True,coastal_shorebird
+Macronectes giganteus,"petrel gigante antártico, petrel gigante del Sur",Procellariiformes,Procellariidae,False,True,VU,VU,15,True,pelagic
+Melanodera melanodera,yal austral,Passeriformes,Thraupidae,False,True,NT,NT,19,False,terrestrial
+Merganetta armata,pato cortacorrientes,Anseriformes,Anatidae,False,True,"NT [Merganetta armata leucogenis];
+NT [M. a. armata]",NT,11,False,terrestrial
+Myiophobus fasciatus,cazamoscas pico chato,Passeriformes,Tyrannidae,False,True,NT,NT,18,False,terrestrial
+Neoxolmis rufiventris,cazamoscas chocolate,Passeriformes,Tyrannidae,False,True,LC,LC,15,False,terrestrial
+Nesofregetta fuliginosa,golondrina de mar de garganta blanca,Procellariiformes,Oceanitidae,False,False,EN,EN,14,True,pelagic
+Nothoprocta perdicaria,"perdiz chilena, perdiz, inambú chileno, tinamú chileno, pisaca, vudu, fuisu",Tinamiformes,Tinamidae,True,True,LC,LC,19,True,terrestrial
+Numenius borealis,zarapito boreal,Charadriiformes,Scolopacidae,False,True,CR,CR,9,True,coastal_shorebird
+Numenius phaeopus,zarapito común,Charadriiformes,Scolopacidae,False,True,LC,LC,17,False,coastal_shorebird
+Numenius tahitiensis,zarapito polinésico,Charadriiformes,Scolopacidae,False,False,Taxón con presencia accidental en Chile,EN,17,True,coastal_shorebird
+Nycticryphes semicollaris,becacina pintada,Charadriiformes,Rostratulidae,False,True,EN,EN,15,True,coastal_shorebird
+Oceanites gracilis,golondrina de mar chica,Procellariiformes,Oceanitidae,False,True,DD,DD,14,False,pelagic
+Oceanites pincoyae,"golondrina de mar Pincoya, paíño Pincoya, Pincoya Storm-petrel (inglés)",Procellariiformes,Oceanitidae,True,True,DD,DD,20,True,pelagic
+Oreopholus ruficollis,"chorlo de campo, pachurrón",Charadriiformes,Charadriidae,False,True,NT (II-X); LC (XV-I; XI-XII),NT,15,False,coastal_shorebird
+Pandion haliaetus,aguila pescadora,Accipitriformes,Pandionidae,False,True,LC,LC,15,False,terrestrial
+Patagioenas araucana,torcaza,Columbiformes,Columbidae,False,True,LC,LC,12,False,terrestrial
+Pelecanoides garnotii,yunco,Procellariiformes,Procellariidae,False,True,EN,EN,14,True,pelagic
+Pelecanoides magellani,"yunco de Magallanes, Magellanic Diving-petrel (inglés)",Procellariiformes,Pelecanoidae,False,True,DD,DD,20,False,pelagic
+Pelecanus thagus,"pelícano peruano, pelícano de Humboldt",Pelecaniformes,Pelecanidae,False,True,NT,NT,15,False,terrestrial
+Phaethon rubricauda,ave del trópico de cola roja,Phaethontiformes,Phaethontidae,False,True,VU,VU,14,True,pelagic
+Phalacrocorax bougainvillii,guanay,Suliformes,Phalacrocoracidae,False,True,NT,NT,14,False,terrestrial
+Phalacrocorax gaimardi,lile,Suliformes,Phalacrocoracidae,False,True,NT,NT,14,False,terrestrial
+Phalaropus tricolor,"pollito de mar tricolor, pollito de mar de Wilson, falaropo tricolor, falaropo de Wilson",Charadriiformes,Scolopacidae,False,True,LC,LC,19,False,coastal_shorebird
+Phegornis mitchellii,chorlito cordillerano,Charadriiformes,Charadriidae,False,True,NT,NT,15,False,coastal_shorebird
+Phoebastria irrorata,albatros de las Galápagos,Procellariiformes,Diomedeidae,False,True,CR,CR,17,True,pelagic
+Phoebetria fusca,albatros oscuro,Procellariiformes,Diomedeidae,False,False,Taxón con presencia accidental en Chile,EN,17,True,pelagic
+Phoebetria palpebrata,"albatros de manto claro, albatros tiznado",Procellariiformes,Diomedeidae,False,True,EN,EN,17,True,pelagic
+Phoenicoparrus andinus,"flamenco andino, parina grande",Phoenicopteriformes,Phoenicopteridae,False,True,VU,VU,11,True,terrestrial
+Phoenicoparrus jamesi,parina chica,Phoenicopteriformes,Phoenicopteridae,False,True,VU,VU,15,True,terrestrial
+Phoenicopterus chilensis,flamenco chileno,Phoenicopteriformes,Phoenicopteridae,False,True,NT,NT,15,False,terrestrial
+Plegadis chihi,cuervo de pantano,Pelecaniformes,Thereskiornithidae,False,True,NT,NT,16,False,terrestrial
+Plegadis ridgwayi,cuervo de pantano de la puna,Pelecaniformes,Thereskiornithidae,False,True,NT,NT,9,False,terrestrial
+Pluvianellus socialis,chorlo de Magallanes,Charadriiformes,Pluvianellidae,False,True,EN,EN,16,True,coastal_shorebird
+Podiceps gallardoi,"pimpollo tobiano, macá tobiano, Hooded Grebe (inglés)",Podicipediformes,Podicipedidae,False,True,CR,CR,20,True,terrestrial
+Porzana spiloptera,"burrito negruzco, polluela overa, Dot-winged Crake (inglés)",Gruiformes,Rallidae,False,True,VU,VU,20,True,terrestrial
+Procellaria aequinoctialis,"petrel de barba blanca, fardela negra grande, petrel negro, pardela gorgiblanca, petrel mentón blanco común",Procellariiformes,Procellariidae,False,True,VU,VU,20,True,pelagic
+Procellaria westlandica,petrel de Westland,Procellariiformes,Procellariidae,False,True,EN,EN,18,True,pelagic
+Pseudocolopteryx citreola,pájaro amarillo,Passeriformes,Tyrannidae,False,True,NT,NT,15,False,terrestrial
+Psilopsiagon aurifrons,perico cordillerano,Psittaciformes,Psittacidae,False,True,LC,LC,16,False,terrestrial
+Pterodroma cooki,fardela de Cook,Procellariiformes,Procellariidae,False,False,VU,VU,14,True,pelagic
+Pterodroma defilippiana,fardela blanca de Más a Tierra,Procellariiformes,Procellariidae,False,True,VU,VU,4,True,pelagic
+Pterodroma externa,"fardela blanca de Juan Fernández, petrel de Juan Fernández",Procellariiformes,Procellariidae,False,False,EN,EN,4,True,pelagic
+Pterodroma longirostris,fardela de Más Afuera,Procellariiformes,Procellariidae,False,True,EN,EN,4,True,pelagic
+Pterodroma neglecta,fardela negra de Juan Fernández,Procellariiformes,Procellariidae,False,True,EN,EN,4,True,pelagic
+Pteroptochos tarnii,hued hued,Passeriformes,Rhynocriptidae,False,True,LC,LC,14,False,terrestrial
+Puffinus nativitatis,fardela de Pascua,Procellariiformes,Procellariidae,False,False,VU,VU,14,True,pelagic
+Pygoscelis adeliae,pingüino de Adelia,Sphenisciformes,Spheniscidae,False,False,EN,EN,18,True,pelagic
+Pygoscelis antarcticus,"pingüino de barbijo, pingüino anillado, pingüino barbudo, pingüino rompepiedras, pingüino antártico",Sphenisciformes,Spheniscidae,False,True,LC,LC,18,False,pelagic
+Pygoscelis papua,papúa,Sphenisciformes,Spheniscidae,False,True,LC,LC,18,False,pelagic
+Rallus antarcticus,pidén austral,Gruiformes,Gruidae,False,True,VU,VU,15,True,terrestrial
+Recurvirostra andina,caití,Charadriiformes,Recurvirostridae,False,True,VU,VU,17,True,coastal_shorebird
+Rhea pennata,ñandú,Rheiformes,Rheidae,False,True,EN [R. p. pennata] [XI]; VU [R. p. tarapacensis]; VU [R. p. pennata] [XII],EN,14 y 7,True,terrestrial
+Scelorchilus rubecula,chucao,Passeriformes,Rhynocriptidae,False,True,LC,LC,14,False,terrestrial
+Sephanoides fernandensis,picaflor de Juan Fernández,Apodiformes,Trochilidae,True,False,CR,CR,15,True,terrestrial
+Spatula platalea,pato cuchara,Anseriformes,Anatidae,False,True,LC,LC,12,False,terrestrial
+Speculanas specularis,"pato anteojillo, pato perro (Argentina y Chile), pato de anteojos, ánade anteojillo (español), spectacled duck, bronze-winged duck (inglés)",Anseriformes,Anatidae,False,True,NT,NT,14,False,terrestrial
+Spheniscus humboldti,"pingüino de Humboldt, pingüino, pájaro niño, patranka, Humboldt Penguin (inglés), Peruvian penguin (inglés)",Sphenisciformes,Spheniscidae,False,True,EN,EN,20,True,pelagic
+Spheniscus magellanicus,pingüino de Magallanes,Sphenisciformes,Spheniscidae,False,True,NT,NT,18,False,pelagic
+Sternula lorata,gaviotín chico,Charadriiformes,Laridae,False,True,EN,EN,1,True,coastal_shorebird
+Strix rufipes,"concón, kongkong, lechuza bataraz",Strigiformes,Strigidae,False,True,NT,NT,12,False,terrestrial
+Sula variegata,piquero,Suliformes,Sulidae,False,True,LC,LC,14,False,terrestrial
+Tachyeres patachonicus,quetru volador,Anseriformes,Anatidae,False,True,LC,LC,12,False,terrestrial
+Tachyeres pteneres,"quetru no volador, pato quetru no volador, pato vapor",Anseriformes,Anatidae,False,True,NT,NT,12,False,terrestrial
+Thalassarche bulleri,albatros de Buller,Procellariiformes,Diomedeidae,False,True,NT,NT,17,False,pelagic
+Thalassarche cauta,albatros de frente blanca,Procellariiformes,Diomedeidae,False,True,NT,NT,17,False,pelagic
+Thalassarche chrysostoma,albatros de cabeza gris,Procellariiformes,Diomedeidae,False,True,VU,VU,15,True,pelagic
+Thalassarche eremita,"albatros de las Islas Chatham, albatros de las Chatham, albatros de Chatham",Procellariiformes,Diomedeidae,False,True,VU,VU,17,True,pelagic
+Thalassarche melanophris,albatros de ceja negra,Procellariiformes,Diomedeidae,False,True,LC,LC,11,False,pelagic
+Thalassarche salvini,albatros de Salvin,Procellariiformes,Diomedeidae,False,True,VU,VU,15,True,pelagic
+Thalasseus elegans,gaviotín elegante,Charadriiformes,Laridae,False,True,NT,NT,16,False,coastal_shorebird
+Thaumastura cora,"picaflor de Cora, colibrí de Cora, Peruvian Sheartail (inglés)",Caprimulgiformes,Trochilidae,False,True,LC,LC,20,False,terrestrial
+Theristicus branickii,bandurria de la puna,Pelecaniformes,Thereskiornithidae,False,True,EN,EN,13,True,terrestrial
+Theristicus melanopis,bandurria,Pelecaniformes,Thereskiornithidae,False,True,LC,LC,13,False,terrestrial
+Thinocorus rumicivorus,"perdicita chica, perdicita común, perdicita",Charadriiformes,Thinocoriidae,False,True,LC,LC,19,False,coastal_shorebird
+Tinamotis ingoufi,perdiz austral,Tinamiformes,Tinamidae,False,True,VU,VU,14,True,terrestrial
+Tinamotis pentlandii,"perdiz de la puna, keu, kiula, kisaca",Tinamiformes,Tinamidae,False,True,LC,LC,14,False,terrestrial
+Tringa flavipes,pitotoy chico,Charadriiformes,Scolopacidae,False,True,LC,LC,17,False,coastal_shorebird
+Vultur gryphus,cóndor,Cathartiformes,Cathartidae,False,True,NT,NT,15,False,terrestrial
+Xenospingus concolor,pizarrita,Passeriformes,Thraupidae,False,True,NT,NT,17,False,terrestrial

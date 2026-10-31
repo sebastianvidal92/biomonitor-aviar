@@ -4,6 +4,8 @@ Usa las fotos particionadas (data/interim/image_manifest_split.csv). Cada foto e
 ejemplo independiente → evaluación por foto (sin agregación). Corre en MPS.
 
     uv run python scripts/12_train_image.py
+    uv run python scripts/12_train_image.py --backbone vit_small_patch16_224.augreg_in21k_ft_in1k \
+        --size 224 --lr 1e-4 --epochs 30                          # transformer de visión (ViT-S/16)
     uv run python scripts/12_train_image.py --backbone vit_base_patch16_384 --epochs 20
 
 NOTA: entrenamiento = cómputo pesado → lo corre el usuario.
@@ -43,6 +45,7 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--mixup-alpha", type=float, default=c["mixup_alpha"])
     p.add_argument("--resume", action="store_true", help="continuar desde el último checkpoint")
     p.add_argument("--init-from", default=None, help="warm-start: cargar pesos de un .pt")
+    p.add_argument("--size", type=int, default=CONFIG["image"]["size"], help="lado de la imagen de entrada (ViT: 224)")
     return p.parse_args()
 
 
@@ -94,8 +97,8 @@ def main() -> None:
 
     manifest = pd.read_csv(data_path("interim", "image_manifest_split.csv"))
     species = sorted(manifest["scientific_name"].unique())
-    train_ds, val_ds, test_ds, label_map = image_datasets_from_manifest(manifest, species)
-    print(f"Dispositivo: {device} | backbone: {args.backbone} | clases: {len(label_map)}\n")
+    train_ds, val_ds, test_ds, label_map = image_datasets_from_manifest(manifest, species, size=args.size)
+    print(f"Dispositivo: {device} | backbone: {args.backbone} | entrada: {args.size} px | clases: {len(label_map)}\n")
 
     dl = lambda ds, shuf, drop=False: DataLoader(  # noqa: E731
         ds, batch_size=args.batch_size, shuffle=shuf,

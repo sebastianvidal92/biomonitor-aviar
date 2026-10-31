@@ -43,6 +43,11 @@ def get_args() -> argparse.Namespace:
     p.add_argument("--weight-decay", type=float, default=c["weight_decay"])
     p.add_argument("--num-workers", type=int, default=c["num_workers"])
     p.add_argument("--mixup-alpha", type=float, default=c["mixup_alpha"])
+    p.add_argument("--label-smoothing", type=float, default=c["label_smoothing"])
+    p.add_argument("--drop-rate", type=float, default=0.3, help="dropout del clasificador")
+    p.add_argument("--drop-path", type=float, default=0.2, help="profundidad estocástica")
+    p.add_argument("--no-augment", action="store_true", help="sin SpecAugment, ganancia ni ruido")
+    p.add_argument("--tag", default="", help="sufijo del checkpoint y del log (ej. 'sinreg'); vacío = modelo principal")
     return p.parse_args()
 
 
@@ -106,7 +111,7 @@ def main() -> None:
 
     manifest = pd.read_csv(data_path("processed", "audio32_manifest.csv"))
     species = pd.read_csv(data_path("external", "species_final.csv"))["scientific_name"].tolist()
-    train_ds, val_ds, test_ds, label_map = datasets_from_manifest(manifest, species)
+    train_ds, val_ds, test_ds, label_map = datasets_from_manifest(manifest, species, augment=not args.no_augment)
 
     dl = lambda ds, shuf, drop=False: DataLoader(  # noqa: E731
         ds, batch_size=args.batch_size, shuffle=shuf,
@@ -115,18 +120,21 @@ def main() -> None:
     train_dl = dl(train_ds, True, True)  # drop_last=True: estabiliza BatchNorm y mixup
     val_dl, test_dl = dl(val_ds, False), dl(test_ds, False)
 
-    model = build_audio_model(args.backbone, num_classes=len(label_map)).to(device)
-    ls = CONFIG["train_audio"]["label_smoothing"]
+    model = build_audio_model(args.backbone, num_classes=len(label_map),
+                              drop_rate=args.drop_rate, drop_path_rate=args.drop_path).to(device)
+    ls = args.label_smoothing
     criterion = nn.CrossEntropyLoss(
         weight=class_weights(manifest, label_map).to(device), label_smoothing=ls
     )
-    print(f"regularización: mixup_alpha={args.mixup_alpha} | label_smoothing={ls}\n")
+    print(f"regularización: mixup_alpha={args.mixup_alpha} | label_smoothing={ls} | dropout={args.drop_rate} | "
+          f"drop_path={args.drop_path} | augment={not args.no_augment}\n")
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
 
     models_dir = PROJECT_ROOT / CONFIG["paths"]["models"]
     models_dir.mkdir(parents=True, exist_ok=True)
-    ckpt = models_dir / f"audio_{args.backbone}.pt"
+    suffix = f"_{args.tag}" if args.tag else ""
+    ckpt = models_dir / f"audio_{args.backbone}{suffix}.pt"
     best_f1 = 0.0
     history = []
 
@@ -149,12 +157,12 @@ def main() -> None:
 
     log_dir = PROJECT_ROOT / "reports" / "training_logs"
     log_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(history).to_csv(log_dir / f"audio_{args.backbone}.csv", index=False)
+    pd.DataFrame(history).to_csv(log_dir / f"audio_{args.backbone}{suffix}.csv", index=False)
 
     # Evaluación final en test con el mejor checkpoint.
     model.load_state_dict(torch.load(ckpt, map_location=device))
     _, test_acc, test_f1 = run_epoch(model, test_dl, device, criterion)
-    label_map_path = models_dir / f"audio_{args.backbone}_labels.json"
+    label_map_path = models_dir / f"audio_{args.backbone}{suffix}_labels.json"
     label_map_path.write_text(json.dumps(label_map, ensure_ascii=False, indent=2))
 
     print(f"\n== Resultado final (mejor modelo en TEST) ==")

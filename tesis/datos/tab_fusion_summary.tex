@@ -1,0 +1,20 @@
+\begin{table}[!htb]
+  \centering\small
+  \caption{\textit{Late fusion} evaluada con pareo por especie repetido: media y desviación estándar sobre 20 repeticiones de 1590 pares (53 especies), para las dos ramas de audio disponibles.}
+  \label{tab:fusion-summary}
+  \footnotesize
+  \begin{tabular}{@{}l l r r@{}}
+    \toprule
+    Rama de audio & Modalidad & \textit{Accuracy} & F1 macro \\
+    \midrule
+    CNN (EfficientNet-B0) & Audio solo & 0,865 $\pm$ 0,008 & 0,861 $\pm$ 0,009 \\
+    CNN (EfficientNet-B0) & Imagen sola & 0,816 $\pm$ 0,009 & 0,803 $\pm$ 0,009 \\
+    CNN (EfficientNet-B0) & \textit{Late fusion} ($\alpha=0{,}5$) & 0,945 $\pm$ 0,004 & 0,942 $\pm$ 0,004 \\
+    CNN (EfficientNet-B0) & Mejor fusión ($\alpha=0{,}5$, geométrica) & 0,956 $\pm$ 0,004 & 0,954 $\pm$ 0,004 \\
+    AST & Audio solo & 0,877 $\pm$ 0,010 & 0,872 $\pm$ 0,010 \\
+    AST & Imagen sola & 0,816 $\pm$ 0,009 & 0,803 $\pm$ 0,009 \\
+    AST & \textit{Late fusion} ($\alpha=0{,}5$) & 0,946 $\pm$ 0,006 & 0,941 $\pm$ 0,006 \\
+    AST & Mejor fusión ($\alpha=0{,}5$, geométrica) & 0,953 $\pm$ 0,005 & 0,948 $\pm$ 0,005 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

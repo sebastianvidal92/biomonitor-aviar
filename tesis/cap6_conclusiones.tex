@@ -1,0 +1,334 @@
+%=======================================================================
+% cap6_conclusiones.tex — Conclusiones, desafíos y trabajo futuro
+%=======================================================================
+
+%-----------------------------------------------------------------------
+\section{Respuesta a las preguntas de investigación}\label{sec:respuestas}
+
+\textbf{PI1. ¿Puede un sistema multimodal identificar aves chilenas mejor
+que los clasificadores unimodales (solo audio o solo imagen) y que un modelo de IA generativa multimodal?} Sí, en ambas comparaciones. La \textit{late fusion} de audio e imagen alcanza 0,945 $\pm$ 0,004 de
+\textit{accuracy} sobre 53 especies (intervalo de confianza al
+\SI{95}{\percent} de 0,924 a 0,959), 8,0 puntos más que el mejor
+clasificador unimodal sobre los mismos pares y casi 10 sobre la
+meta comprometida, y lo hace con datos no emparejados de ciencia ciudadana,
+un escenario que la literatura previa no había explorado. Cada modalidad
+por separado también cumple o roza la meta: audio 0,858 (CNN) y 0,870 (AST)
+sobre 55 especies, imagen 0,848 sobre 53. Frente al modelo de IA generativa multimodal, el sistema especializado gana con claridad: Claude Opus 5.5 alcanza 0,803 en \textit{zero-shot} y 0,817 en
+\textit{few-shot} sobre las mismas fotografías, 3 a 4,5 puntos menos que la
+rama de imagen y 13 menos que la fusión, y falla precisamente en las
+especies endémicas chilenas (F1 0,498 y 0,567 frente a 0,940 de la
+fusión).
+
+\textbf{PI2. ¿Puede un SDM basado en aprendizaje automático superar a
+MaxEnt?} Sí, pero no con redes neuronales. Random Forest y gradient
+boosting superan a MaxEnt en AUC-ROC (0,884 y 0,883 frente a 0,863) en 46 y 44
+de las 54 especies, mientras que la red neuronal conjunta queda por debajo
+(0,856) y la incorporación de parches de cobertura de suelo y
+\textit{embeddings} de imágenes satelitales de un modelo fundacional degrada
+a todos los modelos. La hipótesis ``aprendizaje
+profundo $>$ MaxEnt'' se refuta con evidencia. La hipótesis ``aprendizaje
+automático $>$ MaxEnt'' se confirma con un método más simple, pero con una
+condición importante: bajo validación espacial por bloques, que mide la
+extrapolación a zonas sin registros, todos los modelos caen a 0,80--0,82 y
+ninguno supera a MaxEnt. El aprendizaje automático gana al interpolar, no al
+extrapolar.
+
+\textbf{PI3. ¿Cómo afecta la escasez de datos de las especies amenazadas y
+qué estrategias la mitigan?} De forma distinta en cada módulo. En imagen,
+donde los plumajes de congéneres se parecen, las especies con menos
+fotografías son las que fallan (F1 medio 0,756 en amenazadas frente a 0,842
+en comunes) y dos quedaron fuera del clasificador. En audio, la escasez se
+mitigó con grabaciones de otras poblaciones, aumentación en el espectrograma
+y pesos por clase, y las amenazadas rinden incluso mejor que las comunes
+(0,906 frente a 0,838) porque sus vocalizaciones son distintivas. El precio
+es la dependencia de audio extranjero y conjuntos de prueba de tres a ocho
+grabaciones. En distribución, los pocos registros de las especies de rango
+restringido bastan para modelarlas casi perfectamente (AUC 0,967). La fusión
+multimodal es, en sí misma, la mitigación más efectiva: cubre las especies
+que una modalidad no puede clasificar y corrige los errores de la otra.
+
+%-----------------------------------------------------------------------
+\section{Discusión}\label{sec:discusion}
+
+\textbf{Por qué funciona la fusión.} La complementariedad no es casual. El
+audio separa especies por estructura temporal y espectral del canto, que en
+aves es un carácter de reconocimiento de especie. La imagen separa por forma
+y plumaje. Los pares que confunde una modalidad (\textit{Cinclodes} y
+\textit{Phrygilus} en audio, \textit{Scytalopus} en imagen) son distintos de
+los que confunde la otra, y la \textit{late fusion} solo necesita que una de las dos
+esté segura. Que la \textit{late fusion} y la \textit{early fusion} empaten y
+la \textit{intermediate fusion} pierda indica que, con \textit{backbones}
+fuertes y pocos pares, lo simple gana: la forma más barata de combinar
+evidencia es también la mejor, y la \textit{late fusion} tiene la ventaja de
+operar con una sola modalidad.
+
+\textbf{Por qué los árboles ganan al aprendizaje profundo en el SDM.} El
+problema de distribución, tal como se formuló, es tabular: seis covariables
+y unos cientos de presencias por especie. En ese régimen los ensambles de
+árboles tienen sesgos inductivos adecuados (invariancia a la escala de las
+variables, fronteras de decisión irregulares, robustez a variables
+irrelevantes) y las redes necesitan más datos o regularización
+\citep{grinsztajn2022trees}. La red conjunta comparte información entre
+especies, pero esa ventaja no compensa la pérdida frente a 300 árboles por
+especie. Los experimentos satelitales muestran además que la señal
+ambiental relevante ya está en las covariables clásicas: el NDVI, el clima y
+la elevación resumen lo que la cobertura de suelo y el \textit{embedding}
+satelital repiten con más ruido. Y la validación espacial agrega
+un matiz: la ventaja de los árboles es de interpolación. Al extrapolar a
+zonas sin registros, la respuesta suave y regularizada de MaxEnt generaliza
+igual de bien. Este resultado es informativo para la práctica: con buenas
+covariables, un Random Forest es la elección razonable para describir la
+distribución donde hay datos, MaxEnt sigue siendo tan bueno como cualquiera
+para proyectarla a zonas sin muestreo, y la complejidad adicional debe
+justificarse con una ganancia medida, no supuesta.
+
+\textbf{El valor de la agregación y de los protocolos operacionales.} La
+métrica por ventana única subestima el desempeño real en cuatro puntos.
+Evaluar como se usará el sistema (la grabación completa, la fotografía con
+TTA, el par audio-imagen) no solo da números más altos sino más honestos
+respecto del caso de uso. Lo mismo vale para la comparación de costo: el AST
+mejora un punto a la CNN con veinte veces el cómputo, una diferencia que
+decide qué modelo conviene desplegar en un dispositivo de campo.
+
+\textbf{Relación con la literatura.} La ganancia de la fusión coincide con lo
+observado en SSW60, donde combinar audio e imagen supera a cada modalidad
+\citep{vanhorn2022ssw60}, y la extiende a datos no emparejados de ciencia
+ciudadana. En distribución, el resultado es coherente con el
+\textit{benchmark} de \citet{valavi2022benchmark}, donde MaxEnt y los
+ensambles de árboles quedan entre los mejores métodos con diferencias
+pequeñas, y con la advertencia de \citet{roberts2017crossvalidation}: la
+partición aleatoria sobreestima el desempeño cuando los datos tienen
+estructura espacial, aquí entre cinco y ocho puntos de AUC. Por último, el
+desempeño de la rama de audio sobre especies chilenas, frente a la cobertura
+moderada de BirdNET en Sudamérica \citep{funosas2026birdnet}, respalda la
+estrategia de entrenar clasificadores regionales con datos locales, aunque
+las dos evaluaciones no son directamente comparables.
+
+%-----------------------------------------------------------------------
+\section{Desafíos y limitaciones}\label{sec:limitaciones}
+
+\begin{enumerate}[leftmargin=*, itemsep=3pt]
+  \item \textbf{Evaluación de la fusión con pares sintéticos.} Los pares
+        audio-imagen se construyen entre individuos distintos de la misma
+        especie. El protocolo mide la ganancia de combinar evidencia, que es
+        el caso de uso previsto, pero no captura correlaciones entre el canto
+        y la apariencia de un mismo individuo ni condiciones de campo donde
+        ambas señales se degradan a la vez (un ave lejana, grabada y
+        fotografiada con ruido).
+  \item \textbf{Conjuntos de prueba pequeños para las especies raras.} Con
+        tres grabaciones o dos fotografías de prueba, el F1 de una especie
+        amenazada puede oscilar entre 0 y 1 por un solo ejemplo. Las métricas
+        globales son robustas (la repetición del pareo da una desviación
+        estándar de 0,004 en la fusión), pero las de especies individuales
+        con pocos datos deben leerse como indicativas: el F1 mínimo dentro del
+        grupo de amenazadas baja a 0,48 por una sola especie con dos
+        fotografías.
+  \item \textbf{Origen de las grabaciones.} El \SI{36}{\percent} del audio
+        proviene de otros países y cuatro especies no tienen audio chileno.
+        El conjunto de prueba es mixto. El análisis por origen no muestra
+        penalización (la CNN obtiene 0,847 en las grabaciones chilenas y 0,877
+        en las extranjeras, mientras que el AST obtiene 0,871 y 0,870), pero la limitación
+        persiste en otro sentido: cuatro especies solo pueden evaluarse con
+        audio extranjero, y nada garantiza ese desempeño sobre paisajes
+        sonoros grabados en terreno en Chile.
+  \item \textbf{Sesgos de los registros de presencia.} Los avistamientos de
+        GBIF carecen de esfuerzo de observación, se concentran en 2024--2026 y
+        en el verano austral, y siguen la geografía de los observadores. El
+        fondo de grupo objetivo corrige el sesgo espacial, pero la estacionalidad
+        aprendida por el modelo mezcla fenología con esfuerzo, y el tope de
+        \num{2000} registros por especie descarta historia útil.
+  \item \textbf{Validación espacial.} La comparación principal del SDM usa una
+        partición aleatoria, optimista ante la autocorrelación espacial. La
+        validación por bloques cuantifica esa diferencia: entre cinco y ocho
+        puntos de AUC, y borra la ventaja de los árboles. Por eso ambos
+        protocolos se reportan juntos y la conclusión sobre el SDM se formula
+        con esa salvedad.
+  \item \textbf{Covariables estáticas.} WorldClim y el NDVI medio anual
+        describen el clima y la vegetación promedio, no el año ni el mes de
+        cada observación. El pareo anual del \textit{embedding} satelital
+        mostró que ese desajuste pesa poco, pero una serie temporal de NDVI a
+        mayor resolución sigue siendo la vía natural para un modelo
+        verdaderamente espaciotemporal.
+  \item \textbf{Anotación débil de Xeno-canto.} Cada grabación lleva una
+        especie focal, pero puede contener otras de fondo y tramos sin
+        vocalización. La agregación por grabación mitiga el efecto, pero no lo
+        elimina, y las ventanas de entrenamiento siguen siendo ruidosas.
+  \item \textbf{Cómputo local.} Las arquitecturas de imagen más fuertes
+        (ConvNeXt y ViT-B con preentrenamiento en ImageNet-21k a
+        \SI{384}{px}) quedaron fuera porque su tiempo de entrenamiento era
+        inviable en el equipo; el ViT-S/16 que sí se entrenó, a \SI{224}{px},
+        quedó entre seis y ocho puntos por debajo de EfficientNet-B3 según el
+        protocolo, de modo que sigue abierta la pregunta de si la atención
+        global ayuda con mayor resolución y más cómputo; con GPU dedicada es
+        probable que la rama de imagen mejore. El AST, por su parte, se
+        entrenó con lotes de 8 por la misma restricción.
+  \item \textbf{Comparación con el modelo generativo.} El resultado depende del
+        modelo y la versión consultados, del \textit{prompt} y de que las
+        fotografías de iNaturalist puedan haber formado parte de su
+        entrenamiento. Se reporta como referencia, no como \textit{benchmark}
+        estable.
+\end{enumerate}
+
+\section{Aspectos éticos}\label{sec:etica}
+
+El proyecto no involucra personas ni datos personales, por lo que no requirió
+la aprobación de un comité de ética. Aun así, el uso de datos de ciencia
+ciudadana y la publicación de modelos sobre especies amenazadas plantean
+cuatro consideraciones.
+
+\textbf{Origen y licencias de los datos.} Todas las fuentes son públicas y se
+usaron según sus condiciones. Las grabaciones de Xeno-canto y las fotografías
+de iNaturalist llevan licencias Creative Commons elegidas por sus autores y
+se emplearon solo para entrenar y evaluar modelos, sin redistribuirlas. Los
+registros de eBird e iNaturalist se obtuvieron de GBIF y se citan con el
+identificador de cada conjunto \citep{ebird2026gbif, inat2026gbif}. Las capas
+ambientales (WorldClim, MODIS, SRTM, WorldCover) son de acceso abierto. De
+cada registro se usan solo la especie, las coordenadas y la fecha; no se
+procesa la identidad de los observadores, y las plataformas ya ofuscan las
+localidades de las especies que consideran sensibles antes de publicarlas.
+
+\textbf{Riesgo de mal uso.} Un mapa de probabilidad de presencia de una
+especie amenazada puede orientar su captura o su tráfico; los loros, como el
+tricahue, son el caso más conocido en Chile. Tres decisiones acotan ese
+riesgo. Los mapas se calculan sobre una grilla de \SI{0,1}{\degree} (unos
+\SI{10}{\kilo\metre}) y describen la idoneidad del hábitat, no la ubicación
+de individuos ni de nidos. El prototipo no muestra ni entrega los registros
+individuales que alimentan los modelos. Y en un despliegue público los mapas
+de las especies más sensibles deberían publicarse a menor resolución o
+restringirse a instituciones de conservación, como hacen eBird e iNaturalist
+con sus datos sensibles.
+
+\textbf{Decisiones automatizadas.} El clasificador se equivoca más en las
+especies con pocos datos y confunde congéneres de plumaje o canto parecidos
+(Secciones~\ref{sec:res-audio} y \ref{sec:res-imagen}). Si sus predicciones
+alimentaran una base de datos sin revisión, introducirían registros falsos
+justamente en las especies que más importan. Por eso el sistema se plantea
+como apoyo a la identificación experta: el prototipo muestra las especies
+candidatas con su probabilidad en lugar de una etiqueta única, y cualquier
+uso para registros oficiales debe pasar por validación humana.
+
+\textbf{Sesgos de los datos.} Los registros ciudadanos siguen a los
+observadores: se concentran en la zona central, en verano y en los últimos
+años (\secref{sec:limitaciones}). Un modelo entrenado con ellos describe
+mejor las zonas visitadas que las remotas, y las prioridades de monitoreo
+que se deriven de sus mapas podrían reforzar ese sesgo. El fondo de grupo
+objetivo y la validación por bloques lo acotan y lo cuantifican, pero no lo
+eliminan, y así debe leerse cualquier mapa del sistema. Por último, las
+fotografías enviadas al modelo generativo comercial son públicas y con
+licencia abierta, y no se envió información sobre los observadores.
+
+%-----------------------------------------------------------------------
+\section{Lecciones aprendidas y recomendaciones}\label{sec:lecciones}
+
+Más allá de los resultados, el proyecto deja lecciones que pueden servir a
+otros estudiantes del programa.
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+  \item \textbf{Pedir los datos restringidos el primer día.} La base
+        histórica de eBird se solicitó en julio y no llegó a tiempo, lo que
+        obligó a reemplazar las no detecciones reales por pseudoausencias.
+        Un acceso que depende de terceros debe gestionarse al inicio y con
+        un plan alternativo.
+  \item \textbf{Fijar los \textit{baselines} y el protocolo de evaluación
+        antes de entrenar.} Decidir de antemano contra qué se compara el
+        sistema (MaxEnt, \textit{frozen embeddings}, un modelo generativo) y
+        cómo se mide (ventana única o agregado, recorte central o TTA, pareo
+        por especie) evitó ajustar la vara después de ver los resultados.
+  \item \textbf{Evaluar como se usará el sistema.} La métrica por ventana
+        única subestimaba el desempeño en cuatro puntos; la grabación
+        completa, la fotografía con TTA y el par audio-imagen son los
+        escenarios reales de uso.
+  \item \textbf{Validar espacialmente desde el inicio.} La partición
+        aleatoria daba a los árboles una ventaja de dos puntos sobre MaxEnt
+        que la validación por bloques borró. Con datos georreferenciados, la
+        validación espacial debe ser el protocolo por defecto y no una
+        comprobación final.
+  \item \textbf{No presuponer que el aprendizaje profundo gana.} En datos
+        tabulares la red neuronal perdió frente a Random Forest y frente a
+        MaxEnt. La complejidad de un modelo se justifica con una ganancia
+        medida.
+  \item \textbf{Medir el costo junto con la métrica.} El AST gana un punto a
+        la CNN con veinte veces el cómputo; sin ese dato la decisión de
+        despliegue sería otra.
+  \item \textbf{Automatizar el levantamiento.} Un \textit{pipeline} de
+        \textit{scripts} reanudables permitió rehacer corpus y experimentos
+        muchas veces sin perder trabajo, y es lo que hace reproducible este
+        informe.
+\end{itemize}
+
+Qué haría distinto: solicitar la base de eBird en marzo, entrenar la rama de
+imagen en la nube desde el inicio para probar arquitecturas mayores, y
+organizar al menos una campaña de grabación en terreno para las especies
+amenazadas con poco audio chileno.
+
+%-----------------------------------------------------------------------
+\section{Trabajo futuro}\label{sec:futuro}
+
+\begin{itemize}[leftmargin=*, itemsep=3pt]
+  \item \textbf{Datos para las especies amenazadas.} Solicitar la base
+        histórica de eBird (EBD) con esfuerzo y listas completas, que permite
+        no detecciones reales en lugar de pseudoausencias. Organizar campañas
+        de grabación dirigidas a las trece amenazadas. Explorar
+        \textit{embeddings} bioacústicos de modelos entrenados en aves
+        (BirdNET, Perch) con clasificadores de pocos ejemplos
+        \citep{ghani2023embeddings} para las especies bajo el umbral de
+        inclusión.
+  \item \textbf{Transformers de visión y rama de imagen en la nube.} Entrenar
+        en la nube ConvNeXt o ViT-B con preentrenamiento en ImageNet-21k y
+        mayor resolución (el ViT-S/16 a \SI{224}{px} entrenado aquí quedó por
+        debajo de la CNN), para comprobar si la imagen sola supera el
+        \SI{85}{\percent} y si la atención global ayuda en las especies de
+        plumaje casi idéntico. Incorporar TTA en la
+        rama visual de la fusión.
+  \item \textbf{SDM verdaderamente temporal.} Series de NDVI mensuales de
+        Sentinel-2 o MODIS exportadas de forma asíncrona desde GEE, variables
+        climáticas del año de observación y validación por bloques espaciales
+        y temporales como protocolo por defecto. También cuantificar la
+        incertidumbre de los mapas (por ejemplo, con la varianza entre árboles).
+  \item \textbf{Monitoreo acústico pasivo.} Evaluar los clasificadores sobre
+        paisajes sonoros continuos grabados en terreno, con solapamiento de
+        especies y relación señal-ruido baja, que es el escenario de BirdCLEF
+        \citep{kahl2023birdclef}, y adaptar el umbral de decisión por especie.
+  \item \textbf{Despliegue.} Llevar el prototipo a un servicio estable con
+        modelos cuantizados (la CNN de 4 millones de parámetros es candidata a
+        correr en dispositivos de campo), registro de las predicciones y
+        retroalimentación de expertos para reentrenar.
+\end{itemize}
+
+%-----------------------------------------------------------------------
+\section{Conclusión general}\label{sec:conclusion}
+
+Este trabajo construyó y evaluó un sistema de monitoreo de biodiversidad
+aviar para Chile continental que integra la identificación multimodal de
+especies con el modelado de su distribución, a partir exclusivamente de
+fuentes públicas de ciencia ciudadana y teledetección. Sus resultados
+principales son cuatro. Primero, la fusión de audio e imagen identifica 53
+especies con 0,95 de \textit{accuracy}, superando con amplitud la meta del
+\SI{85}{\percent}, a cada modalidad por separado y a un modelo de IA generativa multimodal, lo que valida la hipótesis multimodal con datos no
+emparejados. Segundo, Random Forest y gradient boosting superan a MaxEnt en
+la estimación de distribución con partición aleatoria, pero no al extrapolar a
+zonas sin registros, donde todos los modelos empatan. Ni las redes
+neuronales ni los parches de cobertura de suelo ni los \textit{embeddings}
+de imágenes satelitales aportan, un resultado negativo bien fundamentado que
+orienta la práctica. Tercero, el
+levantamiento cuantificó la escasez estructural de datos de las especies
+amenazadas chilenas y mostró qué estrategias la mitigan en cada modalidad.
+Cuarto, todo el proceso quedó en un repositorio reproducible y público
+(\url{\repoURL}), con \textit{scripts} reanudables y un prototipo que integra los modelos, que
+puede extenderse a otras especies y regiones. Una última lección cruza los dos módulos. El aprendizaje profundo fue
+imprescindible donde los datos no tienen estructura tabular: el canto y la
+fotografía solo pueden clasificarse aprendiendo representaciones a partir de
+la señal cruda, y ahí las redes preentrenadas y su ajuste fino hicieron la
+diferencia (31 puntos sobre una regresión logística con rasgos congelados en
+audio). Pero cuando los datos ya vienen como una tabla de covariables
+ambientales, la estadística clásica sigue siendo muy valiosa. MaxEnt, que en
+el fondo es una regresión logística regularizada, obtiene un AUC competitivo
+(0,863 frente a 0,884 de Random Forest), empata o gana al extrapolar a zonas
+sin registros y entrega algo que los ensambles y las redes no dan con la
+misma claridad: coeficientes interpretables que dicen cómo responde cada
+especie a la temperatura, la precipitación o la vegetación, y supuestos
+explícitos que pueden discutirse con un ecólogo. La elección del método debe
+seguir a la naturaleza de los datos y al uso que se dará al modelo, no a la
+moda. El sistema no reemplaza al ornitólogo en terreno, pero ofrece una
+herramienta concreta para procesar el volumen creciente de registros
+ciudadanos y para priorizar dónde y cuándo mirar.

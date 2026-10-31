@@ -1,0 +1,15 @@
+\begin{table}[!htb]
+  \centering\small
+  \caption{Métricas extendidas de los clasificadores unimodales (solo audio o solo imagen) en el conjunto de prueba (protocolo operacional). AUC-ROC macro (cada especie frente a las demás); top-5: la especie correcta está entre las cinco más probables; latencia mediana por muestra en Apple M4 Pro (MPS), incluido el cálculo de características.}
+  \label{tab:eval-extended}
+  \footnotesize\setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}l r r r r r r@{}}
+    \toprule
+    Modelo & \textit{Accuracy} & F1 macro & AUC macro & Top-5 & Parámetros & Latencia (ms) \\
+    \midrule
+    Audio: CNN (agregado) & 0,858 & 0,858 & 0,991 & 0,969 & 4,1 M & 18 \\
+    Audio: AST (agregado) & 0,870 & 0,864 & 0,993 & 0,949 & 86,2 M & 177 \\
+    Imagen: B3 (TTA) & 0,848 & 0,808 & 0,990 & 0,948 & 10,8 M & 66 \\
+    \bottomrule
+  \end{tabular}
+\end{table}

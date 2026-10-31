@@ -1,0 +1,108 @@
+%=======================================================================
+%  Informe de Actividad de Graduación
+%  Magíster en Inteligencia Artificial — Pontificia Universidad Católica de Chile
+%
+%  Compilación:  latexmk -pdf main.tex
+%  o bien:       pdflatex main / bibtex main / pdflatex main / pdflatex main
+%=======================================================================
+
+% "oneside" evita las páginas en blanco que el supervisor pidió eliminar.
+\documentclass[12pt, letterpaper, oneside]{report}
+
+\input{preambulo}
+
+%----------------------- Datos del trabajo -----------------------------
+\newcommand{\tituloTesis}{Sistema Inteligente de Monitoreo de Biodiversidad
+  Aviar en Chile: Identificación Multimodal y Modelado de Distribución
+  Espaciotemporal}
+\newcommand{\autorTesis}{Sebastián Vidal}
+\newcommand{\supervisorTesis}{Marcelo Mendoza}
+\newcommand{\fechaTesis}{Noviembre 2026}
+\newcommand{\repoURL}{https://github.com/sebastianvidal92/biomonitor-aviar}  % cuenta personal (confirmar usuario)
+
+\hypersetup{
+  pdftitle  = {\tituloTesis},
+  pdfauthor = {\autorTesis},
+  pdfsubject= {Informe de Actividad de Graduación — Magíster en Inteligencia Artificial}
+}
+
+%=======================================================================
+\begin{document}
+%=======================================================================
+
+%------------------------- Páginas preliminares ------------------------
+\pagenumbering{roman}
+\input{portada}
+\pagestyle{plain}
+
+\tableofcontents
+\clearpage
+\listoffigures
+\addcontentsline{toc}{chapter}{Índice de figuras}
+\clearpage
+\listoftables
+\addcontentsline{toc}{chapter}{Índice de tablas}
+\clearpage
+
+\chapter*{Ficha del proyecto}
+\addcontentsline{toc}{chapter}{Ficha del proyecto}
+\input{ficha}
+\clearpage
+
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+\input{resumen}
+\clearpage
+
+%---------------------------- Cuerpo -----------------------------------
+\pagenumbering{arabic}
+\pagestyle{principal}
+
+\chapter{Introducción}\label{cap:intro}
+\input{cap1_introduccion}
+
+\chapter{Trabajo relacionado}\label{cap:relacionado}
+\input{cap2_trabajo_relacionado}
+
+\chapter{Bases teóricas}\label{cap:teoria}
+\input{cap3_bases_teoricas}
+
+\chapter{Levantamiento de datos}\label{cap:datos}
+\input{cap4_datos}
+
+\chapter{Resultados}\label{cap:resultados}
+\input{cap5_resultados}
+
+\chapter{Conclusiones, desafíos y trabajo futuro}\label{cap:conclusiones}
+\input{cap6_conclusiones}
+
+%------------------------- Bibliografía --------------------------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Referencias}
+% Descomenta para que aparezcan TODAS las entradas del .bib, incluso las
+% que aún no citas (útil mientras armas la revisión ampliada):
+% \nocite{*}
+\bibliography{referencias}
+
+%------------------------- Anexos --------------------------------------
+\appendix
+% Las tablas largas (longtable) pierden la marca de capítulo en sus páginas de
+% continuación, por lo que los anexos usan un encabezado fijo.
+\newcommand{\anexoheader}[1]{\fancypagestyle{anexo}{\fancyhf{}%
+  \fancyhead[L]{\footnotesize #1}\fancyhead[R]{\footnotesize\thepage}%
+  \renewcommand{\headrulewidth}{0.4pt}}\pagestyle{anexo}}
+
+\chapter{Conjunto de especies objetivo}\label{ape:especies}
+\anexoheader{Apéndice A. Conjunto de especies objetivo}
+\input{anexoA}
+
+\chapter{Hiperparámetros y detalles de entrenamiento}\label{ape:hiperparametros}
+\anexoheader{Apéndice B. Hiperparámetros y detalles de entrenamiento}
+\input{anexoB}
+
+\chapter{Métricas por especie}\label{ape:metricas}
+\anexoheader{Apéndice C. Métricas por especie}
+\input{datos/tab_anexoC_especies}
+
+\end{document}

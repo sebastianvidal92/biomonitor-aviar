@@ -1,0 +1,16 @@
+\begin{table}[!htb]
+  \centering\small
+  \caption{Desempeño por grupo de conservación. F1 medio por especie en el conjunto de prueba (audio: CNN, agregado por grabación; imagen: EfficientNet-B3 con TTA; fusión: pareo por especie) y AUC-ROC medio del SDM.}
+  \label{tab:por-grupo}
+  \fitwidth{\begin{tabular}{@{}l r r r r r r r@{}}
+    \toprule
+    Grupo & Especies & F1 audio & Especies & F1 imagen & F1 fusión & AUC MaxEnt & AUC RF \\
+    \midrule
+    Amenazada & 13 & 0,906 & 11 & 0,756 & 0,945 & 0,948 & 0,967 \\
+    Endémica & 7 & 0,865 & 7 & 0,723 & 0,940 & 0,899 & 0,917 \\
+    Común & 35 & 0,838 & 35 & 0,842 & 0,942 & 0,827 & 0,849 \\
+    \midrule
+    Todas & 55 & 0,858 & 53 & 0,808 & 0,942 & 0,863 & 0,884 \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
